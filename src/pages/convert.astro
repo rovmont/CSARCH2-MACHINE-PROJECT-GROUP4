@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Convert · decimal32">
+  <h1 class="page-title">Convert to decimal32</h1>
+  <p class="lede">
+    Enter a decimal number (or IEEE hex / 32-bit binary). Output includes special cases,
+    DPD spaced binary, and hexadecimal.
+  </p>
+
+  <section class="panel">
+    <form id="convert-form" class="form-grid">
+      <label>
+        Decimal / hex / binary input
+        <input id="convert-input" name="value" placeholder="e.g. -12.34, Infinity, 0x225349B0" required />
+      </label>
+      <button class="btn btn-primary" type="submit">Convert</button>
+    </form>
+    <p id="convert-error" class="error" hidden></p>
+    <div id="convert-results" class="results" hidden></div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { convertToDecimal32 } from '../lib/decimal32/index.js';
+
+  const form = document.getElementById('convert-form');
+  const input = document.getElementById('convert-input');
+  const err = document.getElementById('convert-error');
+  const out = document.getElementById('convert-results');
+
+  function render(result) {
+    out.hidden = false;
+    err.hidden = true;
+    const flags = (result.flags || [])
+      .map((f) => `<span class="flag">${f}</span>`)
+      .join('');
+    out.innerHTML = `
+      <div class="result-row"><strong>Decimal</strong><code>${result.decimal}</code></div>
+      <div class="result-row"><strong>Binary (spaced)</strong><code>${result.spacedBinary}</code></div>
+      <div class="result-row"><strong>Hexadecimal</strong><code>${result.hex}</code></div>
+      <div class="flags">${flags}</div>
+      <ol class="steps">${result.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
+    `;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      render(convertToDecimal32(input.value));
+    } catch (ex) {
+      out.hidden = true;
+      err.hidden = false;
+      err.textContent = ex.message || String(ex);
+    }
+  });
+</script>

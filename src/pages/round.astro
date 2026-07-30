@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Round · decimal32">
+  <h1 class="page-title">Rounding methods</h1>
+  <p class="lede">
+    Round a decimal or binary digit string to a target length using all four methods:
+    chopping, round-up, round-down, and round-to-nearest ties-to-even.
+  </p>
+
+  <section class="panel">
+    <form id="round-form" class="form-grid">
+      <label>
+        Number (decimal or binary digits)
+        <input id="round-input" name="value" placeholder="e.g. 1.23456789 or 1011011" required />
+      </label>
+      <label>
+        Target number of digits
+        <input id="round-digits" name="digits" type="number" min="1" max="32" value="7" required />
+      </label>
+      <label>
+        Input radix
+        <select id="round-radix" name="radix">
+          <option value="decimal">Decimal</option>
+          <option value="binary">Binary</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">Round all methods</button>
+    </form>
+    <p id="round-error" class="error" hidden></p>
+    <div id="round-results" class="results" hidden></div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { demonstrateRounding } from '../lib/decimal32/index.js';
+
+  const form = document.getElementById('round-form');
+  const err = document.getElementById('round-error');
+  const out = document.getElementById('round-results');
+
+  const labels = {
+    chopping: 'Chopping (truncation)',
+    'round-up': 'Round-up (toward +∞)',
+    'round-down': 'Round-down (toward −∞)',
+    'ties-to-even': 'Round-to-nearest ties-to-even',
+  };
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      const value = document.getElementById('round-input').value;
+      const digits = Number(document.getElementById('round-digits').value);
+      const radix = document.getElementById('round-radix').value;
+      const demo = demonstrateRounding(value, digits, radix);
+      err.hidden = true;
+      out.hidden = false;
+      out.innerHTML = Object.entries(demo.results)
+        .map(
+          ([mode, r]) => `
+          <div class="result-row">
+            <strong>${labels[mode]}</strong>
+            <code>${r.rounded}</code>
+            <ol class="steps">${r.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
+          </div>`
+        )
+        .join('');
+    } catch (ex) {
+      out.hidden = true;
+      err.hidden = false;
+      err.textContent = ex.message || String(ex);
+    }
+  });
+</script>

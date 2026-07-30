@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Arithmetic · decimal32">
+  <h1 class="page-title">Subtraction &amp; division</h1>
+  <p class="lede">
+    Operands may be decimal or IEEE hexadecimal. Choose subtraction or division and a rounding
+    mode. Results include decimal, spaced binary, hexadecimal, and a step-by-step trace.
+  </p>
+
+  <section class="panel">
+    <form id="arith-form" class="form-grid">
+      <label>
+        Operand A
+        <input id="op-a" name="a" placeholder="e.g. 10.5 or 0x22500000" required />
+      </label>
+      <label>
+        Operand B
+        <input id="op-b" name="b" placeholder="e.g. 2.25 or 0x22500000" required />
+      </label>
+      <label>
+        Operation
+        <select id="op-type" name="op">
+          <option value="subtract">Subtraction (A − B)</option>
+          <option value="divide">Division (A ÷ B)</option>
+        </select>
+      </label>
+      <label>
+        Rounding method
+        <select id="op-round" name="round">
+          <option value="ties-to-even">Ties-to-even</option>
+          <option value="chopping">Chopping</option>
+          <option value="round-up">Round-up</option>
+          <option value="round-down">Round-down</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">Compute</button>
+    </form>
+    <p id="arith-error" class="error" hidden></p>
+    <div id="arith-results" class="results" hidden></div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { subtractDecimal32, divideDecimal32 } from '../lib/decimal32/index.js';
+
+  const form = document.getElementById('arith-form');
+  const err = document.getElementById('arith-error');
+  const out = document.getElementById('arith-results');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      const a = document.getElementById('op-a').value;
+      const b = document.getElementById('op-b').value;
+      const op = document.getElementById('op-type').value;
+      const mode = document.getElementById('op-round').value;
+      const result = op === 'divide' ? divideDecimal32(a, b, mode) : subtractDecimal32(a, b, mode);
+      err.hidden = true;
+      out.hidden = false;
+      const flags = (result.flags || [])
+        .map((f) => `<span class="flag">${f}</span>`)
+        .join('');
+      out.innerHTML = `
+        <div class="result-row"><strong>Decimal</strong><code>${result.decimal}</code></div>
+        <div class="result-row"><strong>Binary (spaced)</strong><code>${result.spacedBinary}</code></div>
+        <div class="result-row"><strong>Hexadecimal</strong><code>${result.hex}</code></div>
+        <div class="flags">${flags}</div>
+        <ol class="steps">${result.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
+      `;
+    } catch (ex) {
+      out.hidden = true;
+      err.hidden = false;
+      err.textContent = ex.message || String(ex);
+    }
+  });
+</script>
