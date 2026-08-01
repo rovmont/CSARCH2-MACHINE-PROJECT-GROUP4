@@ -60,7 +60,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           ([mode, r]) => `
           <div class="result-row">
             <strong>${labels[mode]}</strong>
-            <code>${r.rounded}</code>
+            <code>${r.formatted}</code>
             <ol class="steps">${r.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
           </div>`
         )
