@@ -1,15 +1,22 @@
 import { DECIMAL32, Q_MIN, Q_MAX } from '../types.js';
 import { encodeDeclet } from '../dpd.js';
-import { spacedBinary } from './display.js';
 
 /**
- * Hand-worked decimal32 conversion steps aligned with the CSARCH lecture
- * (IEEE-754 decimal-32 format): normalize to 7 whole digits, then fill
- * sign / combination / exponent continuation / coefficient continuation.
+ * @param {string} title
+ * @param {string} text
+ * @param {import('../types.js').StepVisual} [visual]
+ * @returns {import('../types.js').ConversionStep}
+ */
+function step(title, text, visual) {
+  return visual ? { title, text, visual } : { title, text };
+}
+
+/**
+ * Hand-worked decimal32 conversion steps with visuals for the Convert UI.
  *
  * @param {import('../types.js').Decimal32Value} value
  * @param {{ originalForm?: string }} [opts]
- * @returns {string[]}
+ * @returns {import('../types.js').ConversionStep[]}
  */
 export function explainEncodingProcess(value, opts = {}) {
   const steps = [];
@@ -17,37 +24,68 @@ export function explainEncodingProcess(value, opts = {}) {
   const signWord = value.sign === 1 ? 'negative' : 'positive';
 
   if (value.kind === 'nan') {
-    steps.push(
-      'Classify the value as NaN (Not a Number). In decimal32, NaN is not encoded as an ordinary significand × 10^e form.'
-    );
-    steps.push(
-      'From the combination-field table, NaN uses combination = 11111. The sign bit may still be 0 or 1; ' +
-        `here the sign is ${signWord}, so the sign bit is ${signBit}.`
-    );
     const signal = value.signaling ? '1' : '0';
+    const rem = signal + '0'.repeat(25);
     steps.push(
-      `After the combination field, the remaining 26 bits hold NaN payload / signaling information. ` +
-        `This encoding uses signaling bit = ${signal} and zeros for the rest (canonical quiet/signaling pattern).`
+      step(
+        'Special: NaN',
+        'NaN is not encoded as significand × 10^e. Combination 11111 marks NaN.'
+      )
     );
     steps.push(
-      `Final field layout (sign | combination | remainder): ${signBit} 11111 ${signal}${'0'.repeat(5)} ${'0'.repeat(10)} ${'0'.repeat(10)}.`
+      step(
+        'Sign + combination',
+        `Sign is ${signWord} → bit ${signBit}. Combination = 11111.`,
+        {
+          type: 'bitfields',
+          sign: signBit,
+          combination: '11111',
+          expCont: rem.slice(0, 6),
+          declet0: rem.slice(6, 16),
+          declet1: rem.slice(16, 26),
+          highlight: 'combination',
+        }
+      )
+    );
+    steps.push(
+      step(
+        'Payload bits',
+        `Signaling bit = ${signal}; remaining bits are 0 in this canonical encoding.`,
+        {
+          type: 'bitfields',
+          sign: signBit,
+          combination: '11111',
+          expCont: rem.slice(0, 6),
+          declet0: rem.slice(6, 16),
+          declet1: rem.slice(16, 26),
+          highlight: 'expCont',
+        }
+      )
     );
     return steps;
   }
 
   if (value.kind === 'infinity') {
     steps.push(
-      'Classify the value as Infinity. Infinity is a special encoding, not a finite significand × 10^e.'
+      step(
+        'Special: Infinity',
+        'Infinity uses combination 11110. Exponent and coefficient continuation are all zeros.'
+      )
     );
     steps.push(
-      'From the combination-field table, Infinity uses combination = 11110. ' +
-        `The sign is ${signWord}, so the sign bit is ${signBit} (0 = +, 1 = −).`
-    );
-    steps.push(
-      'The exponent continuation and coefficient continuation bits are set to 0 in the canonical Infinity encoding.'
-    );
-    steps.push(
-      `Final field layout: ${signBit} 11110 000000 0000000000 0000000000.`
+      step(
+        'Canonical Infinity layout',
+        `Sign is ${signWord} → bit ${signBit}.`,
+        {
+          type: 'bitfields',
+          sign: signBit,
+          combination: '11110',
+          expCont: '000000',
+          declet0: '0000000000',
+          declet1: '0000000000',
+          highlight: 'combination',
+        }
+      )
     );
     return steps;
   }
@@ -56,16 +94,20 @@ export function explainEncodingProcess(value, opts = {}) {
   if (!Number.isFinite(coeff) || coeff < 0) coeff = 0;
   let exp = Number.isInteger(value.exponent) ? value.exponent : 0;
 
-  if (opts.originalForm) {
-    steps.push(
-      `IEEE-754 decimal32 is a 32-bit layout: 1 sign bit, 5 combination bits, 6 exponent-continuation bits, ` +
-        `and 20 coefficient-continuation bits (the remaining 6 significand digits as densely-packed BCD). Bias = ${DECIMAL32.BIAS}.`
-    );
-  } else {
-    steps.push(
-      'IEEE-754 decimal floating-point uses base 10: the significand is decimal, and the power is a power of ten.'
-    );
-  }
+  steps.push(
+    step(
+      'decimal32 bit layout',
+      `32 bits: 1 sign · 5 combination · 6 exponent continuation · 20 coefficient continuation (DPD). Bias = ${DECIMAL32.BIAS}.`,
+      {
+        type: 'bitfields',
+        sign: 'S',
+        combination: 'G₀…G₄',
+        expCont: 'e′ low 6',
+        declet0: 'declet 0',
+        declet1: 'declet 1',
+      }
+    )
+  );
 
   if (coeff === 0) {
     exp = Math.max(Q_MIN, Math.min(Q_MAX, exp));
@@ -76,11 +118,19 @@ export function explainEncodingProcess(value, opts = {}) {
     }
     if (exp > Q_MAX) {
       steps.push(
-        `After placing the value in significand × 10^e form, the exponent e = ${exp} exceeds the largest ` +
-          `representable plain exponent (${Q_MAX} for the 7-digit form). That is overflow, so encode signed Infinity instead.`
-      );
-      steps.push(
-        `Infinity: sign bit = ${signBit}, combination = 11110, remaining bits = 0 → ${signBit} 11110 000000 0000000000 0000000000.`
+        step(
+          'Overflow → Infinity',
+          `Plain exponent ${exp} is above ${Q_MAX}. Encode signed Infinity instead.`,
+          {
+            type: 'bitfields',
+            sign: signBit,
+            combination: '11110',
+            expCont: '000000',
+            declet0: '0000000000',
+            declet1: '0000000000',
+            highlight: 'combination',
+          }
+        )
       );
       return steps;
     }
@@ -90,8 +140,10 @@ export function explainEncodingProcess(value, opts = {}) {
     }
     if (exp < Q_MIN) {
       steps.push(
-        `The exponent e = ${exp} is below the smallest plain exponent (${Q_MIN}). ` +
-          'Without dropping nonzero digits we cannot raise e into range, so the value underflows to signed zero.'
+        step(
+          'Underflow → signed zero',
+          `Plain exponent ${exp} is below ${Q_MIN}; flush to signed zero at Etiny.`
+        )
       );
       coeff = 0;
       exp = Q_MIN;
@@ -102,25 +154,54 @@ export function explainEncodingProcess(value, opts = {}) {
   const shown = `${value.sign === 1 ? '−' : ''}${coeff === 0 ? '0' : String(parseInt(coeffDigits, 10))} × 10^${exp}`;
 
   steps.push(
-    `Working form for the bit fields: ${shown}. ` +
-      `Use the 7-digit coefficient field ${coeffDigits} (leading zeros pad the significand when it has fewer than 7 digits).`
+    step(
+      'Working form',
+      `Pad the significand to 7 digits: ${coeffDigits}.`,
+      {
+        type: 'digits',
+        digits: coeffDigits,
+        sign: /** @type {0|1} */ (value.sign ?? 0),
+        exponent: exp,
+        markMsd: true,
+        groupRest: true,
+      }
+    )
   );
 
   const msd = Number(coeffDigits[0]);
-  const msdBits4 = msd.toString(2).padStart(4, '0');
   const rest = coeffDigits.slice(1);
   const g0 = rest.slice(0, 3);
   const g1 = rest.slice(3, 6);
 
   steps.push(
-    `Identify the most-significant digit (MSD) of the 7-digit significand ${coeffDigits}: MSD = ${msd} ` +
-      `(binary ${msdBits4}). The remaining six digits are ${rest}, which will later fill the coefficient continuation field ` +
-      `as two 3-digit groups ${g0} and ${g1}.`
+    step(
+      'Split the significand',
+      `MSD = ${msd} goes into the combination field. The other six digits split into two DPD groups.`,
+      {
+        type: 'digits',
+        digits: coeffDigits,
+        sign: /** @type {0|1} */ (value.sign ?? 0),
+        exponent: exp,
+        markMsd: true,
+        groupRest: true,
+      }
+    )
   );
 
   steps.push(
-    `Determine the sign bit from the lecture rule: 0 → positive, 1 → negative. ` +
-      `The value is ${signWord}, therefore the sign bit is ${signBit}.`
+    step(
+      'Sign bit',
+      `0 = positive, 1 = negative. Value is ${signWord} → ${signBit}.`,
+      {
+        type: 'bitfields',
+        sign: signBit,
+        combination: '·····',
+        expCont: '······',
+        declet0: '··········',
+        declet1: '··········',
+        highlight: 'sign',
+      }
+    )
   );
 
   const E = exp + DECIMAL32.BIAS;
@@ -131,11 +212,18 @@ export function explainEncodingProcess(value, opts = {}) {
   const Ebits = E.toString(2).padStart(8, '0');
 
   steps.push(
-    `Form the biased exponent used in the bit fields: e′ = e + bias = ${exp} + ${DECIMAL32.BIAS} = ${E}. ` +
-      `In 8 bits that is ${Ebits}. The lecture places the two most-significant bits of e′ in the combination field ` +
-      `(here ${expTopBits}; only 00, 01, or 10 are used for finite numbers) and the remaining six bits ` +
-      `${expContBits} in the exponent continuation field. ` +
-      `(For the 7-digit form, the usable plain exponents run from about ${Q_MIN} up to ${Q_MAX}; Emax/Emin in the format table are 96/−95 for the adjusted view.)`
+    step(
+      'Biased exponent e′',
+      `e′ = e + ${DECIMAL32.BIAS} = ${exp} + ${DECIMAL32.BIAS} = ${E}. Split into top 2 bits (combination) and low 6 bits (exponent continuation).`,
+      {
+        type: 'parts',
+        parts: [
+          { label: 'e′ (8 bits)', value: Ebits, tone: 'neutral' },
+          { label: 'top 2 → combo', value: expTopBits, tone: 'combo' },
+          { label: 'low 6 → exp cont', value: expContBits, tone: 'exp' },
+        ],
+      }
+    )
   );
 
   let combination;
@@ -143,25 +231,53 @@ export function explainEncodingProcess(value, opts = {}) {
     const msd3 = msd.toString(2).padStart(3, '0');
     combination = expTopBits + msd3;
     steps.push(
-      `Build the 5-bit combination field using the finite-number row for MSD 0…7. ` +
-        `That row packs (two MSBs of e′) followed by the three low bits of the MSD. ` +
-        `MSD ${msd} is in 0…7, so its three-bit form is ${msd3}. ` +
-        `Combination = ${expTopBits} ∥ ${msd3} = ${combination}.`
+      step(
+        'Combination field (MSD 0…7)',
+        `Pack top-2 of e′ with the 3-bit MSD: ${expTopBits} ∥ ${msd3}.`,
+        {
+          type: 'parts',
+          parts: [
+            { label: 'e′ top 2', value: expTopBits, tone: 'exp' },
+            { label: 'MSD (3 bits)', value: msd3, tone: 'msd' },
+            { label: 'combination', value: combination, tone: 'combo' },
+          ],
+        }
+      )
     );
   } else {
     const msdLow = (msd - 8).toString(2);
     combination = '11' + expTopBits + msdLow;
     steps.push(
-      `Build the 5-bit combination field using the finite-number row for MSD 8 or 9. ` +
-        `That row starts with 11, then the two MSBs of e′, then one bit selecting 8 (0) or 9 (1). ` +
-        `MSD ${msd} gives trailing bit ${msdLow}. ` +
-        `Combination = 11 ∥ ${expTopBits} ∥ ${msdLow} = ${combination}.`
+      step(
+        'Combination field (MSD 8 or 9)',
+        `Row starts with 11, then e′ top 2, then 0/1 for MSD 8/9.`,
+        {
+          type: 'parts',
+          parts: [
+            { label: 'prefix', value: '11', tone: 'combo' },
+            { label: 'e′ top 2', value: expTopBits, tone: 'exp' },
+            { label: 'MSD select', value: msdLow, tone: 'msd' },
+            { label: 'combination', value: combination, tone: 'combo' },
+          ],
+        }
+      )
     );
   }
 
   steps.push(
-    `Record the exponent continuation field as the low six bits of e′: ${expContBits}. ` +
-      'Together with the two exponent bits already stored in the combination field, this reconstructs the full biased exponent e′.'
+    step(
+      'Exponent continuation',
+      `Low six bits of e′ sit here: ${expContBits}.`,
+      {
+        type: 'bitfields',
+        sign: signBit,
+        combination,
+        expCont: expContBits,
+        declet0: '··········',
+        declet1: '··········',
+        highlight: 'expCont',
+      }
+    )
   );
 
   const declet1 = encodeDeclet(Number(g0[0]), Number(g0[1]), Number(g0[2]));
@@ -170,23 +286,36 @@ export function explainEncodingProcess(value, opts = {}) {
   const declet2Bits = declet2.toString(2).padStart(10, '0');
 
   steps.push(
-    `Fill the 20-bit coefficient continuation field. The MSD already sits in the combination field; ` +
-      `the other six decimal digits are stored as densely-packed BCD (DPD): each group of three decimal digits ` +
-      `compresses into a 10-bit declet. ` +
-      `Group ${g0} (digits ${g0[0]}, ${g0[1]}, ${g0[2]}) → ${declet1Bits}. ` +
-      `Group ${g1} (digits ${g1[0]}, ${g1[1]}, ${g1[2]}) → ${declet2Bits}. ` +
-      `Concatenating those two declets gives the 20-bit coefficient continuation ${declet1Bits}${declet2Bits}.`
+    step(
+      'DPD coefficient continuation',
+      'Each trio of decimal digits compresses into a 10-bit declet.',
+      {
+        type: 'dpd',
+        group0: g0,
+        group1: g1,
+        declet0: declet1Bits,
+        declet1: declet2Bits,
+      }
+    )
   );
 
   const bits = signBit + combination + expContBits + declet1Bits + declet2Bits;
   steps.push(
-    `Concatenate the decimal32 fields in order — ` +
-      `1 sign bit | 5 combination bits | 6 exponent-continuation bits | 20 coefficient-continuation bits: ` +
-      `${signBit} | ${combination} | ${expContBits} | ${declet1Bits} | ${declet2Bits}.`
-  );
-  steps.push(
-    `With spacing for readability (sign | combination | exponent continuation | coeff. continuation): ${spacedBinary(bits)}.`
+    step(
+      'Assemble the 32-bit word',
+      `Working form was ${shown}. Fields concatenate in order.`,
+      {
+        type: 'bitfields',
+        sign: signBit,
+        combination,
+        expCont: expContBits,
+        declet0: declet1Bits,
+        declet1: declet2Bits,
+      }
+    )
   );
 
+  void bits;
+  void opts;
   return steps;
 }

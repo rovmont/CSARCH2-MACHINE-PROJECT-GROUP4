@@ -5,6 +5,16 @@ import { roundDigitString } from '../rounding.js';
 import { parseDecimalInput } from './parse.js';
 
 /**
+ * @param {string} title
+ * @param {string} text
+ * @param {import('../types.js').StepVisual} [visual]
+ * @returns {import('../types.js').ConversionStep}
+ */
+function step(title, text, visual) {
+  return visual ? { title, text, visual } : { title, text };
+}
+
+/**
  * Fit an arbitrary-precision finite value into decimal32 (7 digits).
  * Precision fitting uses Jillianne's shared roundDigitString from rounding.js.
  *
@@ -18,6 +28,7 @@ export function fitToDecimal32(parsed, mode = 'ties-to-even', opts = {}) {
     return packResult(parsed, explainEncodingProcess(parsed, { originalForm: opts.sourceText }));
   }
 
+  /** @type {import('../types.js').ConversionStep[]} */
   const steps = [];
   const maxDigits = DECIMAL32.PRECISION;
   let digits = String(parsed.coefficient ?? '0').replace(/^0+(?=\d)/, '') || '0';
@@ -31,17 +42,38 @@ export function fitToDecimal32(parsed, mode = 'ties-to-even', opts = {}) {
     const scientificSig =
       digits.length === 1 ? digits : `${digits[0]}.${digits.slice(1)}`;
     steps.push(
-      `The input is first viewed in scientific form as ${signPrefix}${scientificSig} × 10^${scientificExp}. ` +
-        `Significand in decimal? Yes. Base-10? Yes. Normalized to 7 whole digits? No. ` +
-        `Rewrite by moving the radix point to get an integer significand: ${signPrefix}${digits} × 10^${exponent}.`
+      step(
+        'Normalize the input',
+        'Scientific form is rewritten into an integer significand × 10^e (7 whole digits when possible).',
+        {
+          type: 'equation',
+          left: `${signPrefix}${scientificSig} × 10^${scientificExp}`,
+          right: `${signPrefix}${digits} × 10^${exponent}`,
+          note: 'Move the radix point → integer coefficient',
+        }
+      )
     );
   } else if (digits !== '0') {
+    const encodingReady = digits.length === maxDigits;
+    const tooLong = digits.length > maxDigits;
+    let text;
+    if (tooLong) {
+      text = `Significand has ${digits.length} digits. decimal32 only stores 7 coefficient digits, so the next step rounds it down.`;
+    } else if (encodingReady) {
+      text = 'Already 7 whole digits — ready for the bit fields.';
+    } else {
+      text = `Significand has ${digits.length} digit(s); the encoding field will pad to 7 digits with leading zeros.`;
+    }
     steps.push(
-      `Take the decimal value as ${signPrefix}${digits} × 10^${exponent}. ` +
-        `Significand in decimal? Yes. Base-10? Yes. ` +
-        (digits.length === maxDigits
-          ? 'Normalized to 7 whole digits? Yes.'
-          : `The significand currently has ${digits.length} digit(s); the encoding field will use a 7-digit coefficient (with leading zeros if needed).`)
+      step('Start from decimal form', text, {
+        type: 'digits',
+        // Show the full parsed coefficient — never truncate here.
+        digits: tooLong ? digits : digits.padStart(maxDigits, '0'),
+        sign,
+        exponent,
+        markMsd: encodingReady,
+        groupRest: encodingReady,
+      })
     );
   }
 
@@ -61,9 +93,16 @@ export function fitToDecimal32(parsed, mode = 'ties-to-even', opts = {}) {
     digits = fitted;
     exponent += expAdj;
     steps.push(
-      `The significand has more than 7 whole digits (${before}). ` +
-        `decimal32 only stores 7 coefficient digits, so reduce it to ${digits} using round-to-nearest, ties-to-even, ` +
-        `and raise the power of ten by ${expAdj}. Normalized form: ${signPrefix}${digits} × 10^${exponent}.`
+      step(
+        'Fit to 7 digits',
+        `Round-to-nearest, ties-to-even; raise the power of ten by ${expAdj}.`,
+        {
+          type: 'equation',
+          left: `${signPrefix}${before} × 10^${exponent - expAdj}`,
+          right: `${signPrefix}${digits} × 10^${exponent}`,
+          note: 'decimal32 stores only 7 coefficient digits',
+        }
+      )
     );
   }
 
@@ -95,7 +134,7 @@ export function convertToDecimal32(input) {
       spacedBinary: '0 00000 000000 0000000000 0000000000',
       hex: '0x00000000',
       decimal: 'Error',
-      steps: [`Error: ${err.message}`],
+      steps: [{ title: 'Error', text: err.message }],
       flags: ['error'],
     };
   }

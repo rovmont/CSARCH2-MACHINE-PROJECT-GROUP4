@@ -28,13 +28,55 @@ export const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1); // 90
  * @property {string} [coefficient] - up to 7 decimal digits as string (no sign)
  * @property {string} [payload] - optional NaN payload bits/digits
  *
+ * @typedef {Object} BitFieldVisual
+ * @property {'bitfields'} type
+ * @property {string} sign
+ * @property {string} combination
+ * @property {string} expCont
+ * @property {string} [coeffCont]
+ * @property {string} [declet0]
+ * @property {string} [declet1]
+ * @property {'sign'|'combination'|'expCont'|'coeffCont'|null} [highlight]
+ *
+ * @typedef {Object} DigitsVisual
+ * @property {'digits'} type
+ * @property {string} digits - coefficient digits (may be longer than 7 before fitting)
+ * @property {0|1} [sign]
+ * @property {number} [exponent]
+ * @property {boolean} [markMsd]
+ * @property {boolean} [groupRest] - only meaningful for a 7-digit encoding view
+ *
+ * @typedef {Object} EquationVisual
+ * @property {'equation'} type
+ * @property {string} left
+ * @property {string} right
+ * @property {string} [note]
+ *
+ * @typedef {Object} PartsVisual
+ * @property {'parts'} type
+ * @property {{ label: string, value: string, tone?: string }[]} parts
+ *
+ * @typedef {Object} DpdVisual
+ * @property {'dpd'} type
+ * @property {string} group0
+ * @property {string} group1
+ * @property {string} declet0
+ * @property {string} declet1
+ *
+ * @typedef {BitFieldVisual|DigitsVisual|EquationVisual|PartsVisual|DpdVisual} StepVisual
+ *
+ * @typedef {Object} ConversionStep
+ * @property {string} title - short heading for the step card
+ * @property {string} text - concise explanation
+ * @property {StepVisual} [visual]
+ *
  * @typedef {Object} ConversionResult
  * @property {Decimal32Value} value
  * @property {string} bits - 32-char binary string
  * @property {string} spacedBinary - fields: sign | combo(5) | expCont(6) | declet0(10) | declet1(10)
  * @property {string} hex - e.g. 0x225349B0
  * @property {string} decimal - human-readable decimal
- * @property {string[]} steps - step-by-step explanation for the UI
+ * @property {(string|ConversionStep)[]} steps - text and/or visual walkthrough for the UI
  * @property {string[]} flags - e.g. inexact, overflow, underflow
  */
 

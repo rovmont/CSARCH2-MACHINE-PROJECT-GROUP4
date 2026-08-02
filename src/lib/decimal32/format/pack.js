@@ -5,7 +5,7 @@ import { spacedBinary, valueToDecimalString } from './display.js';
 /**
  * Build a ConversionResult for the UI once encode works.
  * @param {import('../types.js').Decimal32Value} value
- * @param {string[]} [steps]
+ * @param {(string|import('../types.js').ConversionStep)[]} [steps]
  * @param {string[]} [flags]
  * @returns {import('../types.js').ConversionResult}
  */
