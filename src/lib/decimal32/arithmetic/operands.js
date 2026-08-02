@@ -1,12 +1,12 @@
-import { parseDecimalInput } from './encode.js';
-import { decodeDecimal32 } from './format.js';
+import { parseDecimalInput } from '../convert/parse.js';
+import { decodeDecimal32 } from '../format/codec.js';
 
 /**
  * Parse a Feature 3 operand as decimal or IEEE hexadecimal.
  *
  * @param {string} input
  * @param {'decimal'|'hex'} format - selected in the UI
- * @returns {import('./types.js').Decimal32Value}
+ * @returns {import('../types.js').Decimal32Value}
  */
 export function parseArithmeticOperand(input, format = 'decimal') {
   const trimmed = String(input ?? '').trim();

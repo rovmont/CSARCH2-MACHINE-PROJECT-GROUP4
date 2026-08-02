@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL;
     <h1>Machine 4<br /><span>decimal32</span></h1>
     <p>
       IEEE 754 decimal single-precision simulator using Densely Packed Decimal (DPD).
-      Convert, round, subtract, and divide — with spaced binary, hexadecimal, and step traces.
+      Convert decimals to decimal32, compare rounding methods, and run subtraction or division.
     </p>
     <div class="cta-row">
       <a class="btn btn-primary" href={`${base}convert/`}>Start converting</a>
@@ -18,15 +18,15 @@ const base = import.meta.env.BASE_URL;
   <div class="feature-cards">
     <a href={`${base}convert/`}>
       <h3>1 · Convert</h3>
-      <p>Decimal → decimal32 with special cases, spaced binary fields, and hex.</p>
+      <p>Turn a decimal number into IEEE 754 decimal32 as spaced binary and hexadecimal.</p>
     </a>
     <a href={`${base}round/`}>
       <h3>2 · Round</h3>
-      <p>Chopping, round-up, round-down, and ties-to-even side by side.</p>
+      <p>Compare chopping, round-up, round-down, and ties-to-even for a chosen digit length.</p>
     </a>
     <a href={`${base}arithmetic/`}>
       <h3>3 · Arithmetic</h3>
-      <p>Subtraction and division with rounding and full step-by-step output.</p>
+      <p>Subtract or divide decimal / IEEE hex operands with a selected rounding method.</p>
     </a>
   </div>
 </BaseLayout>

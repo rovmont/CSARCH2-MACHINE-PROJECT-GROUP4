@@ -1,4 +1,4 @@
-import { stubConversionResult } from './types.js';
+import { stubConversionResult } from '../types.js';
 
 /**
  * OWNER: Teoxon, Jat (Feature 3b — Division)
@@ -13,10 +13,10 @@ import { stubConversionResult } from './types.js';
  */
 
 /**
- * @param {string|import('./types.js').Decimal32Value} aInput
- * @param {string|import('./types.js').Decimal32Value} bInput
- * @param {import('./rounding.js').RoundingMode} [mode]
- * @returns {import('./types.js').ConversionResult}
+ * @param {string|import('../types.js').Decimal32Value} aInput
+ * @param {string|import('../types.js').Decimal32Value} bInput
+ * @param {import('../rounding.js').RoundingMode} [mode]
+ * @returns {import('../types.js').ConversionResult}
  */
 export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   // TODO(Jat): Compute A ÷ B in decimal32 with rounding + step trace.
@@ -24,6 +24,6 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   void bInput;
   void mode;
   return stubConversionResult(
-    'TODO(Jat): Implement divideDecimal32 in divide.js — parse operands, handle ÷0 / Inf / NaN specials, divide with guards, round, pack decimal/binary/hex + steps.'
+    'TODO(Jat): Implement divideDecimal32 in arithmetic/divide.js — parse operands, handle ÷0 / Inf / NaN specials, divide with guards, round, pack decimal/binary/hex + steps.'
   );
 }

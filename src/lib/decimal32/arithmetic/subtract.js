@@ -15,10 +15,10 @@ import { DECIMAL32 } from './types.js';
  */
 
 /**
- * @param {string|import('./types.js').Decimal32Value} aInput
- * @param {string|import('./types.js').Decimal32Value} bInput
- * @param {import('./rounding.js').RoundingMode} [mode]
- * @returns {import('./types.js').ConversionResult}
+ * @param {string|import('../types.js').Decimal32Value} aInput
+ * @param {string|import('../types.js').Decimal32Value} bInput
+ * @param {import('../rounding.js').RoundingMode} [mode]
+ * @returns {import('../types.js').ConversionResult}
  */
 export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	const steps = [];

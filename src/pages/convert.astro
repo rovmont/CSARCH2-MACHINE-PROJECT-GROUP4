@@ -4,16 +4,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Convert · decimal32">
   <h1 class="page-title">Convert to decimal32</h1>
   <p class="lede">
-    Enter a decimal number. Outputs include spaced binary and hexadecimal (special cases
-    included), plus a step-by-step trace.
+    Convert a decimal value into IEEE 754 decimal32 (single-precision). The result is shown
+    as a spaced binary encoding and as hexadecimal, including special cases such as
+    ±0, ±Infinity, and NaN.
   </p>
 
   <section class="panel">
     <form id="convert-form" class="form-grid">
       <label>
         Decimal number
-        <input id="convert-input" name="value" placeholder="e.g. -12.34, 0.001, Infinity, NaN" required />
+        <input
+          id="convert-input"
+          name="value"
+          placeholder="e.g. -12.34, 1e10, 1.11 x 10^4"
+          required
+        />
       </label>
+      <p class="hint">
+        Accepts plain decimals or scientific notation (<code>1e10</code>, <code>1.11 x 10^4</code>).
+      </p>
       <button class="btn btn-primary" type="submit">Convert</button>
     </form>
     <p id="convert-error" class="error" hidden></p>
@@ -29,18 +38,217 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const err = document.getElementById('convert-error');
   const out = document.getElementById('convert-results');
 
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderBitfields(v) {
+    const fields = [
+      { key: 'sign', label: 'Sign', bits: v.sign, flex: 1 },
+      { key: 'combination', label: 'Combination', bits: v.combination, flex: 5 },
+      { key: 'expCont', label: 'Exp cont.', bits: v.expCont, flex: 6 },
+      {
+        key: 'coeffCont',
+        label: 'Coeff. continuation',
+        bits: v.coeffCont ?? `${v.declet0 ?? ''}${v.declet1 ?? ''}`,
+        flex: 20,
+        split: v.declet0 && v.declet1 ? [v.declet0, v.declet1] : null,
+      },
+    ];
+
+    const cells = fields
+      .map((f) => {
+        const hot = Array.isArray(v.highlight)
+          ? v.highlight.includes(f.key)
+          : v.highlight === f.key;
+        const hi = hot ? ' is-hot' : '';
+        const body = f.split
+          ? `<span class="bf-bits bf-split"><span>${esc(f.split[0])}</span><span>${esc(f.split[1])}</span></span>`
+          : `<span class="bf-bits">${esc(f.bits)}</span>`;
+        return `
+          <div class="bf-field bf-${f.key}${hi}" style="flex:${f.flex}">
+            ${body}
+            <span class="bf-label">${esc(f.label)}</span>
+          </div>`;
+      })
+      .join('');
+
+    return `<div class="bit-strip" role="img" aria-label="decimal32 bit fields">${cells}</div>`;
+  }
+
+  function renderDigits(v) {
+    // Keep every digit from the step payload. Only pad when the step asks for a
+    // 7-digit encoding view — never slice long significands down to 7 here.
+    let digits = String(v.digits ?? '0');
+    if (v.groupRest && digits.length < 7) {
+      digits = digits.padStart(7, '0');
+    }
+    const showGroups = Boolean(v.groupRest && digits.length === 7);
+    const chips = [...digits]
+      .map((d, i) => {
+        let cls = 'digit-chip';
+        if (v.markMsd && i === 0) cls += ' is-msd';
+        else if (showGroups && i >= 1 && i <= 3) cls += ' is-g0';
+        else if (showGroups && i >= 4) cls += ' is-g1';
+        return `<span class="${cls}">${esc(d)}</span>`;
+      })
+      .join('');
+
+    const sign = v.sign === 1 ? '−' : '';
+    const exp =
+      typeof v.exponent === 'number'
+        ? `<span class="digit-exp">× 10<sup>${esc(String(v.exponent))}</sup></span>`
+        : '';
+    const legend = showGroups
+      ? `<div class="digit-legend">
+           <span><i class="swatch swatch-msd"></i>MSD → combination</span>
+           <span><i class="swatch swatch-g0"></i>group → declet 0</span>
+           <span><i class="swatch swatch-g1"></i>group → declet 1</span>
+         </div>`
+      : digits.length > 7
+        ? `<div class="digit-legend"><span>${digits.length} digits before rounding to 7</span></div>`
+        : '';
+
+    return `
+      <div class="digit-viz">
+        <div class="digit-row">
+          <span class="digit-sign">${sign}</span>
+          ${chips}
+          ${exp}
+        </div>
+        ${legend}
+      </div>`;
+  }
+
+  function renderEquation(v) {
+    return `
+      <div class="eq-viz">
+        <code class="eq-side">${esc(v.left)}</code>
+        <span class="eq-arrow" aria-hidden="true">→</span>
+        <code class="eq-side">${esc(v.right)}</code>
+        ${v.note ? `<p class="eq-note">${esc(v.note)}</p>` : ''}
+      </div>`;
+  }
+
+  function renderParts(v) {
+    const parts = (v.parts || [])
+      .map(
+        (p) => `
+        <div class="part-chip tone-${esc(p.tone || 'neutral')}">
+          <span class="part-label">${esc(p.label)}</span>
+          <code class="part-value">${esc(p.value)}</code>
+        </div>`
+      )
+      .join('');
+    return `<div class="parts-viz">${parts}</div>`;
+  }
+
+  function renderDpd(v) {
+    return `
+      <div class="dpd-viz">
+        <div class="dpd-col">
+          <span class="dpd-label">Digits</span>
+          <code class="dpd-box tone-g0">${esc(v.group0)}</code>
+          <code class="dpd-box tone-g1">${esc(v.group1)}</code>
+        </div>
+        <div class="dpd-arrows" aria-hidden="true">
+          <span>→</span><span>→</span>
+        </div>
+        <div class="dpd-col">
+          <span class="dpd-label">10-bit declets</span>
+          <code class="dpd-box tone-d0">${esc(v.declet0)}</code>
+          <code class="dpd-box tone-d1">${esc(v.declet1)}</code>
+        </div>
+      </div>`;
+  }
+
+  function renderHex(v) {
+    const bits = String(v.bits || '').replace(/\s/g, '').padStart(32, '0').slice(-32);
+    const nibbles = v.nibbles || [];
+    const hexDigits = String(v.hexDigits || v.hex || '').replace(/^0x/i, '');
+    const cells = nibbles
+      .map((nibble, i) => {
+        const digit = hexDigits[i] ?? '';
+        return `
+          <div class="hex-cell">
+            <code class="hex-nibble">${esc(nibble)}</code>
+            <span class="hex-arrow" aria-hidden="true">↓</span>
+            <code class="hex-digit">${esc(digit)}</code>
+          </div>`;
+      })
+      .join('');
+    return `
+      <div class="hex-viz">
+        <div class="hex-row">${cells}</div>
+        <p class="hex-result">Hexadecimal result: <code>${esc(v.hex || '0x' + hexDigits)}</code></p>
+      </div>`;
+  }
+
+  function renderVisual(visual) {
+    if (!visual) return '';
+    switch (visual.type) {
+      case 'bitfields':
+        return renderBitfields(visual);
+      case 'digits':
+        return renderDigits(visual);
+      case 'equation':
+        return renderEquation(visual);
+      case 'parts':
+        return renderParts(visual);
+      case 'dpd':
+        return renderDpd(visual);
+      case 'hex':
+        return renderHex(visual);
+      default:
+        return '';
+    }
+  }
+
+  function overviewFromBits(bits) {
+    const b = String(bits || '').replace(/\s/g, '').padStart(32, '0').slice(-32);
+    return renderBitfields({
+      type: 'bitfields',
+      sign: b.slice(0, 1),
+      combination: b.slice(1, 6),
+      expCont: b.slice(6, 12),
+      declet0: b.slice(12, 22),
+      declet1: b.slice(22, 32),
+    });
+  }
+
+  function renderStep(s, i) {
+    if (typeof s === 'string') {
+      return `<li class="step-card" style="--i:${i}"><p class="step-text">${esc(s)}</p></li>`;
+    }
+    return `
+      <li class="step-card" style="--i:${i}">
+        <h3 class="step-title"><span class="step-num">${i + 1}</span>${esc(s.title || 'Step')}</h3>
+        <p class="step-text">${esc(s.text || '')}</p>
+        ${renderVisual(s.visual)}
+      </li>`;
+  }
+
   function render(result) {
     out.hidden = false;
     err.hidden = true;
     const flags = (result.flags || [])
-      .map((f) => `<span class="flag">${f}</span>`)
+      .map((f) => `<span class="flag">${esc(f)}</span>`)
       .join('');
+    const steps = (result.steps || []).map(renderStep).join('');
+
     out.innerHTML = `
-      <div class="result-row"><strong>Decimal</strong><code>${result.decimal}</code></div>
-      <div class="result-row"><strong>Binary (spaced)</strong><code>${result.spacedBinary}</code></div>
-      <div class="result-row"><strong>Hexadecimal</strong><code>${result.hex}</code></div>
+      <div class="result-row"><strong>Binary (spaced)</strong><code>${esc(result.spacedBinary)}</code></div>
+      <div class="result-row"><strong>Hexadecimal</strong><code>${esc(result.hex)}</code></div>
+      <div class="result-row result-overview">
+        <strong>Field map</strong>
+        ${overviewFromBits(result.bits)}
+      </div>
       <div class="flags">${flags}</div>
-      <ol class="steps">${result.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
+      <ol class="step-list">${steps}</ol>
     `;
   }
 
