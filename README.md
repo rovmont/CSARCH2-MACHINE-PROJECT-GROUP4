@@ -40,6 +40,7 @@
 ## Task Board
 
 
+<<<<<<< HEAD
 | Member           | Ownership            | Tasks                                                               | Status      |
 | ---------------- | -------------------- | ------------------------------------------------------------------- | ----------- |
 | Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README     | Done        |
@@ -47,6 +48,15 @@
 | Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API        | Done        |
 | Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract    | Not Started |
 | Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide       | Not Started |
+=======
+| Member           | Ownership            | Tasks                                                                  | Status      |
+| ---------------- | -------------------- | ---------------------------------------------------------------------- | ----------- |
+| Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README        | Done        |
+| Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex     | In Progress |
+| Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API           | Done        |
+| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract       | Not Started |
+| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide          | In Progress |
+>>>>>>> 0dd5674bc821a08a7ebcc8ac29f3572fb4ec8510
 
 
 Status values: `Not Started` · `In Progress` · `Done`
