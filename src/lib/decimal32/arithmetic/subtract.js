@@ -26,14 +26,12 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	steps.push(`Input A: coefficient ${aInput.coefficient ?? '0'}, exponent ${aInput.exponent ?? '0'}.`);
 	steps.push(`Input B: coefficient ${bInput.coefficient ?? '0'}, exponent ${bInput.exponent ?? '0'}.`);
 
-
 	// if nan, result is always nan
 	if (aInput.kind === 'nan' || bInput.kind === 'nan') {
 		const nan = aInput.kind === 'nan' ? aInput : bInput;
 		steps.push(`A NaN operand was found, result is automatically declared as NaN.`);
 		return packResult({kind: 'nan', sign: nan.sign}, steps, ['nan']);
 	}
-
 
 	// negate b
 	const bNeg = {
@@ -44,6 +42,23 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	}
 	steps.push(`Negated B. −B has coefficient ${bNeg.coefficient ?? '0'}, exponent ${bNeg.exponent ?? 0}, sign ${bNeg.sign ? '-' : '+'}.`)
 
+	// checks for infinity
+	if (aInput.kind === 'infinity' || bNeg === 'infinity') {
+		if (aInput.kind === 'infinity' && bNeg === 'infinity') {
+			if (aInput.sign === bNeg.sign) {
+				steps.push(`Both operands are infinite, with the same sign. The result is thus an infinity of the same sign.`);
+				return packResult({kind: 'infinity', sign: aInput.sign}, steps, []);
+			}
+			else {
+				steps.push(`Both operands are infinite, with opposing signs. The result is thurs NaN.`);
+				return packResult({kind: 'nan', sign: 0}, steps, ['nan']);
+			}
+		}
+
+		const inf = aInput.kind === 'infinity' ? aInput : bNeg;
+		steps.push(`One operand is infinite, while the other is finite. The result is equivalent to the infinite operand.`);
+		return packResult({kind: 'infinity', sign: inf.sign}, steps, []);
+	}
 
 	const coeffA = BigInt(aInput.coefficient ?? '0') * (aInput.sign === 1 ? -1n : 1n);
 	const coeffB = BigInt(bNeg.coefficient ?? '0') * (bNeg.sign === 1 ? -1n : 1n);
