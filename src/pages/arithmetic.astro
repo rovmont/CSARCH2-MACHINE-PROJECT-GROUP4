@@ -62,6 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     divideDecimal32,
     parseArithmeticOperand,
   } from '../lib/decimal32/index.js';
+  import { esc, renderStepList } from '../lib/render/stepViz.js';
 
   const form = document.getElementById('arith-form');
   const err = document.getElementById('arith-error');
@@ -79,6 +80,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   formatA.addEventListener('change', () => syncPlaceholder(opA, formatA));
   formatB.addEventListener('change', () => syncPlaceholder(opB, formatB));
 
+  function render(result) {
+    err.hidden = true;
+    out.hidden = false;
+    const flags = (result.flags || [])
+      .map((f) => `<span class="flag">${esc(f)}</span>`)
+      .join('');
+
+    out.innerHTML = `
+      <div class="result-row"><strong>Decimal</strong><code>${esc(result.decimal)}</code></div>
+      <div class="result-row"><strong>Binary (spaced)</strong><code>${esc(result.spacedBinary)}</code></div>
+      <div class="result-row"><strong>Hexadecimal</strong><code>${esc(result.hex)}</code></div>
+      <div class="flags">${flags}</div>
+      ${renderStepList(result.steps)}
+    `;
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     try {
@@ -87,18 +104,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const op = document.getElementById('op-type').value;
       const mode = document.getElementById('op-round').value;
       const result = op === 'divide' ? divideDecimal32(a, b, mode) : subtractDecimal32(a, b, mode);
-      err.hidden = true;
-      out.hidden = false;
-      const flags = (result.flags || [])
-        .map((f) => `<span class="flag">${f}</span>`)
-        .join('');
-      out.innerHTML = `
-        <div class="result-row"><strong>Decimal</strong><code>${result.decimal}</code></div>
-        <div class="result-row"><strong>Binary (spaced)</strong><code>${result.spacedBinary}</code></div>
-        <div class="result-row"><strong>Hexadecimal</strong><code>${result.hex}</code></div>
-        <div class="flags">${flags}</div>
-        <ol class="steps">${result.steps.map((s) => `<li>${typeof s === 'string' ? s : `${s.title}: ${s.text}`}</li>`).join('')}</ol>
-      `;
+      render(result);
     } catch (ex) {
       out.hidden = true;
       err.hidden = false;
