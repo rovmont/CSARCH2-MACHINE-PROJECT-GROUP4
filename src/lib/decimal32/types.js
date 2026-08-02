@@ -14,6 +14,10 @@ export const DECIMAL32 = {
   SIGNIFICAND_CONTINUATION_BITS: 20,
 };
 
+/** Plain exponent range for a 7-digit coefficient (Etiny … Qmax). */
+export const Q_MIN = DECIMAL32.EMIN - (DECIMAL32.PRECISION - 1); // -101
+export const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1); // 90
+
 /**
  * @typedef {'finite'|'zero'|'infinity'|'nan'} ValueKind
  *

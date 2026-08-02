@@ -22,7 +22,7 @@
 ### August 2, 2026
 
 - Aligned feature inputs with the Machine 4 specification (decimal-only convert; decimal/binary rounding; decimal or IEEE hex arithmetic via UI format selectors).
-- Added shared arithmetic operand parsing (`operands.js`).
+- Added shared arithmetic operand parsing (`arithmetic/operands.js`).
 
 ---
 
@@ -34,10 +34,10 @@
 | Member           | Ownership            | Tasks                                                                  | Status      |
 | ---------------- | -------------------- | ---------------------------------------------------------------------- | ----------- |
 | Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README        | Done        |
-| Go, Justin       | Feature 1            | `dpd.js`, `format.js`, `encode.js` — DPD convert; specials; binary/hex | In Progress |
+| Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex     | In Progress |
 | Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API           | Done        |
-| Luna, Jacoba     | Feature 3 — subtract | `subtract.js` — hex/decimal ops; steps; wire Arithmetic subtract       | Not Started |
-| Teoxon, Jat      | Feature 3 — divide   | `divide.js` — division specials/steps; wire Arithmetic divide          | Not Started |
+| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract       | Not Started |
+| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide          | Not Started |
 
 
 Status values: `Not Started` · `In Progress` · `Done`

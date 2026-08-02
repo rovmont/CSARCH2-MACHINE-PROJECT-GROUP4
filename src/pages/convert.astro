@@ -4,16 +4,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Convert · decimal32">
   <h1 class="page-title">Convert to decimal32</h1>
   <p class="lede">
-    Enter a decimal number. Outputs include spaced binary and hexadecimal (special cases
-    included), plus a step-by-step trace.
+    Convert a decimal value into IEEE 754 decimal32 (single-precision). The result is shown
+    as a spaced binary encoding and as hexadecimal, including special cases such as
+    ±0, ±Infinity, and NaN.
   </p>
 
   <section class="panel">
     <form id="convert-form" class="form-grid">
       <label>
         Decimal number
-        <input id="convert-input" name="value" placeholder="e.g. -12.34, 0.001, Infinity, NaN" required />
+        <input
+          id="convert-input"
+          name="value"
+          placeholder="e.g. -12.34, 1e10, 1.11 x 10^4"
+          required
+        />
       </label>
+      <p class="hint">
+        Accepts plain decimals or scientific notation (<code>1e10</code>, <code>1.11 x 10^4</code>).
+      </p>
       <button class="btn btn-primary" type="submit">Convert</button>
     </form>
     <p id="convert-error" class="error" hidden></p>
@@ -36,7 +45,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       .map((f) => `<span class="flag">${f}</span>`)
       .join('');
     out.innerHTML = `
-      <div class="result-row"><strong>Decimal</strong><code>${result.decimal}</code></div>
       <div class="result-row"><strong>Binary (spaced)</strong><code>${result.spacedBinary}</code></div>
       <div class="result-row"><strong>Hexadecimal</strong><code>${result.hex}</code></div>
       <div class="flags">${flags}</div>
