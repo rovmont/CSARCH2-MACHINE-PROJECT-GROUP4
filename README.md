@@ -84,18 +84,9 @@ node scripts/smoke-test.mjs
 App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`  
 (With GitHub Pages base path: `/CSARCH2-MACHINE-PROJECT-GROUP4/...`)
 
-### Deploy (GitHub Pages)
 
-The workflow in `.github/workflows/deploy.yml` builds and publishes on push to `main`.
-
-**One-time repo setting (fixes deploy 404):**  
-[Settings → Pages](https://github.com/rovmont/CSARCH2-MACHINE-PROJECT-GROUP4/settings/pages) → **Build and deployment** → Source: **GitHub Actions** → Save.
-
-Then re-run the failed workflow (Actions → Deploy to GitHub Pages → Re-run), or push another commit to `main`.
 
 ---
-
-
 
 ## Insights and Reflection
 
