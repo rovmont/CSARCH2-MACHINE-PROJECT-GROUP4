@@ -1,6 +1,6 @@
-import { packResult } from './format.js';
-import { roundDigitString } from './rounding.js';
-import { DECIMAL32 } from './types.js';
+import { packResult } from '../format/pack.js';
+import { roundDigitString } from '../rounding.js';
+import { DECIMAL32 } from '../types.js';
 
 /**
  * OWNER: Luna, Jacoba (Feature 3a — Subtraction)
@@ -24,7 +24,7 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	const steps = [];
 	const flags = [];
 	steps.push(`Input A: coefficient ${aInput.coefficient ?? '0'}, exponent ${aInput.exponent ?? '0'}.`);
-	steps.push(`Input A: coefficient ${bInput.coefficient ?? '0'}, exponent ${bInput.exponent ?? '0'}.`);
+	steps.push(`Input B: coefficient ${bInput.coefficient ?? '0'}, exponent ${bInput.exponent ?? '0'}.`);
 
 
 	// TODO: check if nan
@@ -37,14 +37,14 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 		coefficient: bInput.coefficient,
 		exponent: bInput.exponent,
 	}
-	steps.push(`Negated B. −B has coefficient ${b.coefficient ?? '0'}, exponent ${b.exponent ?? 0}, sign ${b.sign ? '-' : '+'}.`)
+	steps.push(`Negated B. −B has coefficient ${bNeg.coefficient ?? '0'}, exponent ${bNeg.exponent ?? 0}, sign ${bNeg.sign ? '-' : '+'}.`)
 
 
 	// TODO: check if infinity
 
 
 	const coeffA = BigInt(aInput.coefficient ?? '0') * (aInput.sign === 1 ? -1n : 1n);
-	const coeffB = BigInt(bNeg.coefficient ?? '0' * (bNeg.sign === 1 ? -1n : 1n));
+	const coeffB = BigInt(bNeg.coefficient ?? '0') * (bNeg.sign === 1 ? -1n : 1n);
 	const expA = aInput.exponent ?? 0;
 	const expB = bNeg.exponent ?? 0;
 
@@ -77,8 +77,8 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 
 
 	// seperating to sign and coeff
-	resultSign = rawSum < 0n ? 1 : 0;
-	resultCoeff = rawSum < 0n ? -rawSum : rawSum
+	const resultSign = rawSum < 0n ? 1 : 0;
+	const resultCoeff = rawSum < 0n ? -rawSum : rawSum
 
 	
 	// TODO: normalize
@@ -87,7 +87,7 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 
 
 	// final result
-	finalResult = {
+	const finalResult = {
 		kind: resultCoeff === 0 ? 'zero' : 'finite',
 		sign: resultSign,
 		coefficient: resultCoeff,
