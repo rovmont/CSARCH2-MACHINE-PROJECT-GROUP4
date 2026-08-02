@@ -55,7 +55,7 @@ function validateDecimalInput(input) {
     throw new SyntaxError('Invalid input: minus sign must be at the beginning.');
   }
 
-  if (trimmed === '' || trimmed === '+' || trimmed === '-' || trimmed === '.') {
+  if (trimmed === '' || trimmed === '+' || trimmed === '-') {
     throw new SyntaxError('Invalid input: empty or incomplete number.');
   }
 
@@ -134,14 +134,21 @@ export function parseDecimalInput(input) {
 
   validateDecimalInput(trimmed);
 
-  const numMatch = trimmed.match(/^([+-]?)(\d+)?(?:\.(\d+))?$/);
-  if (!numMatch || (!numMatch[2] && !numMatch[3])) {
+  // Allow trailing-dot forms like "5." (frac may be empty).
+  const numMatch = trimmed.match(/^([+-]?)(\d+)?(?:\.(\d*))?$/);
+  if (!numMatch) {
     throw new SyntaxError(`parseDecimalInput: could not parse "${input}" as a decimal32 value`);
   }
 
   const sign = numMatch[1] === '-' ? 1 : 0;
-  const intPart = numMatch[2] || '0';
-  const fracPart = numMatch[3] || '';
+  const intRaw = numMatch[2];
+  const fracRaw = numMatch[3]; // undefined = no dot; '' = trailing dot; digits = fraction
+  if (intRaw == null && (fracRaw == null || fracRaw === '')) {
+    throw new SyntaxError('Invalid input: decimal point with no digits.');
+  }
+
+  const intPart = intRaw || '0';
+  const fracPart = fracRaw || '';
 
   if (intPart.length > 1 && intPart.startsWith('0')) {
     throw new SyntaxError('Invalid input: integer part cannot have leading zeros unless it is zero.');
