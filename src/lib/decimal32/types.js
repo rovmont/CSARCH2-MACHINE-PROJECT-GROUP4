@@ -70,6 +70,18 @@ export const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1); // 90
  * @property {string[]} [nibbles] - eight 4-bit groups
  * @property {string} [hexDigits] - eight hex characters without 0x
  *
+ * @typedef {Object} ColumnsRow
+ * @property {string} label - short row label, e.g. "A", "−B", "Sum"
+ * @property {0|1} [sign] - 0 renders "+", 1 renders "−", omit for no sign chip
+ * @property {string} digits - unsigned magnitude digits for this row (no sign, no exponent)
+ * @property {number} [exponent] - shared/aligned exponent shown after the row
+ *
+ * @typedef {Object} ColumnsVisual
+ * @property {'columns'} type
+ * @property {ColumnsRow[]} rows - operand rows, e.g. A and −B aligned to a common exponent
+ * @property {ColumnsRow} [result] - result row, rendered below a rule and highlighted
+ * @property {string} [note]
+ *
  * @typedef {BitFieldVisual|DigitsVisual|EquationVisual|PartsVisual|DpdVisual|HexVisual} StepVisual
  *
  * @typedef {Object} ConversionStep
