@@ -43,7 +43,7 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	steps.push(`Negated B. −B has coefficient ${bNeg.coefficient ?? '0'}, exponent ${bNeg.exponent ?? 0}, sign ${bNeg.sign ? '-' : '+'}.`)
 
 	// checks for infinity
-	if (aInput.kind === 'infinity' || bNeg === 'infinity') {
+	if (aInput.kind === 'infinity' || bNeg.kind === 'infinity') {
 		if (aInput.kind === 'infinity' && bNeg.kind === 'infinity') {
 			if (aInput.sign === bNeg.sign) {
 				steps.push(`Both operands are infinite, with the same sign. The result is thus an infinity of the same sign.`);
@@ -90,8 +90,9 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	steps.push(`Get the sum of both coefficients: ${signedA} + (${signedB}) = ${rawSum} (× 10^${commonExp}).`);
 
 	// seperating to sign and coeff
-	const resultSign = rawSum < 0n ? 1 : 0;
-	const resultCoeff = rawSum < 0n ? -rawSum : rawSum
+	let resultSign = rawSum < 0n ? 1 : 0;
+	let resultCoeff = rawSum < 0n ? -rawSum : rawSum
+	let resultExp = commonExp;
 
 	// checking if result is equal to zero
 	if (rawSum === 0n) {
@@ -106,19 +107,48 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 			steps.push(`Result is exactly zero. Sign is set to +0`);
 		}
 	}
-
 	
-	// TODO: normalize
+	// normalizes result
+	let coeffStr = resultCoeff.toString();	
+	if (coeffStr.length > DECIMAL32.PRECISION) {
+		const before = coeffStr;
+		const { digits : rounded, steps: roundSteps, changed } = roundDigitString(
+			coeffStr,
+			DECIMAL32.PRECISION,
+			mode,
+			resultSign
+		);
+
+		let after = rounded;
+		let exponentAdjustment = before.length - DECIMAL32.PRECISION;
+
+		if (after.length > DECIMAL32.PRECISION) {
+			after = after.slice(0, DECIMAL32.PRECISION);
+			exponentAdjustment += 1;
+		}
+
+		coeffStr = after;
+		resultExp = commonExp + exponentAdjustment;
+
+		steps.push(`Normalize: coefficient had ${before.length} digits, adjusted to ${coeffStr} using ${mode} rounding.`);
+		if (changed) {
+			steps.push(`Rounding changed the value, the result is now inexact.`);
+			flags.push('inexact');
+		}
+	}
+	else {
+		steps.push('Normalize: Coefficient already fits within 7 digits, no noramlization needed.');
+	}
 
 	// TODO: check for overflow
 
 
 	// final result
 	const finalResult = {
-		kind: resultCoeff === 0 ? 'zero' : 'finite',
+		kind: coeffStr === '0' ? 'zero' : 'finite',
 		sign: resultSign,
-		coefficient: resultCoeff,
-		exponent: commonExp,
+		coefficient: coeffStr,
+		exponent: resultExp,
 	}
 	steps.push(`Final result: ${resultSign ? '-' : ''}${resultCoeff} x 10^${commonExp}`)
 
