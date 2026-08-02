@@ -27,7 +27,12 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	steps.push(`Input B: coefficient ${bInput.coefficient ?? '0'}, exponent ${bInput.exponent ?? '0'}.`);
 
 
-	// TODO: check if nan
+	// if nan, result is always nan
+	if (aInput.kind === 'nan' || bInput.kind === 'nan') {
+		const nan = aInput.kind === 'nan' ? aInput : bInput;
+		steps.push(`A NaN operand was found, result is automatically declared as NaN.`);
+		return packResult({kind: 'nan', sign: nan.sign}, steps, ['nan']);
+	}
 
 
 	// negate b
@@ -38,9 +43,6 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 		exponent: bInput.exponent,
 	}
 	steps.push(`Negated B. −B has coefficient ${bNeg.coefficient ?? '0'}, exponent ${bNeg.exponent ?? 0}, sign ${bNeg.sign ? '-' : '+'}.`)
-
-
-	// TODO: check if infinity
 
 
 	const coeffA = BigInt(aInput.coefficient ?? '0') * (aInput.sign === 1 ? -1n : 1n);
