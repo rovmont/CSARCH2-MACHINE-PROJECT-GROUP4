@@ -140,9 +140,6 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 		steps.push('Normalize: Coefficient already fits within 7 digits, no noramlization needed.');
 	}
 
-	// TODO: check for overflow
-
-
 	// final result
 	const finalResult = {
 		kind: coeffStr === '0' ? 'zero' : 'finite',
@@ -153,5 +150,16 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	steps.push(`Final result: ${resultSign ? '-' : ''}${resultCoeff} x 10^${commonExp}`)
 
 	const result = packResult(finalResult, steps, flags);
+
+	// checking for under/overflow
+	if (finalResult.kind === 'finite' && result.value.kind === 'infinity') {
+		result.flags.push('overflow');
+		result.steps.push('Coefficient exceeded decimal32 range, rounded to infinity.');
+	}
+	else if (finalResult.kind === 'finite' && result.value.kind === 'zero') {
+		result.flags.push('underflow');
+		result.steps.push('Coefficient too small to represent, rounded to zero.');
+	}
+
 	return result;
 }
