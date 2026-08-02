@@ -2,7 +2,8 @@
 
 **Group 4:** Go, Justin · Leung, Jillianne · Luna, Jacoba · Montaño, Rovin · Teoxon, Jat  
 **Machine:** Machine 4 — Decimal 32-bit Floating-Point Machine (IEEE 754 decimal32, DPD encoding)  
-**Deployment Link:** *TBD*
+**Deployment Link:** [https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/](https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/)  
+*(Requires GitHub Pages → Source: **GitHub Actions** in repo Settings → Pages.)*
 
 ---
 
@@ -82,6 +83,15 @@ node scripts/smoke-test.mjs
 
 App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`  
 (With GitHub Pages base path: `/CSARCH2-MACHINE-PROJECT-GROUP4/...`)
+
+### Deploy (GitHub Pages)
+
+The workflow in `.github/workflows/deploy.yml` builds and publishes on push to `main`.
+
+**One-time repo setting (fixes deploy 404):**  
+[Settings → Pages](https://github.com/rovmont/CSARCH2-MACHINE-PROJECT-GROUP4/settings/pages) → **Build and deployment** → Source: **GitHub Actions** → Save.
+
+Then re-run the failed workflow (Actions → Deploy to GitHub Pages → Re-run), or push another commit to `main`.
 
 ---
 
