@@ -44,13 +44,13 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 
 	// checks for infinity
 	if (aInput.kind === 'infinity' || bNeg === 'infinity') {
-		if (aInput.kind === 'infinity' && bNeg === 'infinity') {
+		if (aInput.kind === 'infinity' && bNeg.kind === 'infinity') {
 			if (aInput.sign === bNeg.sign) {
 				steps.push(`Both operands are infinite, with the same sign. The result is thus an infinity of the same sign.`);
 				return packResult({kind: 'infinity', sign: aInput.sign}, steps, []);
 			}
 			else {
-				steps.push(`Both operands are infinite, with opposing signs. The result is thurs NaN.`);
+				steps.push(`Both operands are infinite, with opposing signs. The result is thus NaN.`);
 				return packResult({kind: 'nan', sign: 0}, steps, ['nan']);
 			}
 		}
