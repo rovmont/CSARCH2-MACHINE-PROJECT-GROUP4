@@ -37,7 +37,7 @@
 | Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex     | In Progress |
 | Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API           | Done        |
 | Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract       | Not Started |
-| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide          | Not Started |
+| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide          | In Progress |
 
 
 Status values: `Not Started` · `In Progress` · `Done`
