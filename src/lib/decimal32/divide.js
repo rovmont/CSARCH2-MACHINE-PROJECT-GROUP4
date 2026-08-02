@@ -3,21 +3,13 @@ import { stubConversionResult } from './types.js';
 /**
  * OWNER: Teoxon, Jat (Feature 3b — Division)
  *
- * Spec: Divide two operands (decimal or IEEE hex). Apply a rounding method.
- * Output step-by-step solution and final result in decimal, spaced binary, and hex
- * (including special cases: ÷0, 0÷0 → NaN, Inf cases, etc.).
+ * Inputs: decimal or IEEE hex operands (parsed via parseArithmeticOperand), operation,
+ * rounding method.
+ * Outputs: step-by-step + decimal / spaced binary / hex (incl. specials).
  *
- * Wire-up: src/pages/arithmetic.astro calls divideDecimal32(a, b, mode) when
- * operation === "divide".
+ * Wire-up: arithmetic.astro → divideDecimal32(a, b, mode).
  *
- * Suggested approach:
- * 1. Parse operands via Feature 1 helpers (Justin).
- * 2. Special-case NaN / Inf / zero denominators before numeric divide.
- * 3. Divide coefficients with extra guard digits, then round via Jillianne’s API
- *    and pack with Justin’s encode/packResult.
- *
- * TODO(Jat): Implement divideDecimal32 fully; return ConversionResult-shaped object
- * with a detailed `steps` array for the UI.
+ * TODO(Jat): Implement divideDecimal32; return ConversionResult with steps.
  */
 
 /**

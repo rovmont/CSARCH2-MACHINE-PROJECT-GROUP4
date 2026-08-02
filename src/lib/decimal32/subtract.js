@@ -3,21 +3,13 @@ import { stubConversionResult } from './types.js';
 /**
  * OWNER: Luna, Jacoba (Feature 3a — Subtraction)
  *
- * Spec: Subtract two operands (decimal or IEEE hex). Apply a rounding method.
- * Output step-by-step solution and final result in decimal, spaced binary, and hex
- * (including special cases).
+ * Inputs: decimal or IEEE hex operands (parsed via parseArithmeticOperand), operation,
+ * rounding method.
+ * Outputs: step-by-step + decimal / spaced binary / hex.
  *
- * Wire-up: src/pages/arithmetic.astro calls subtractDecimal32(a, b, mode) when
- * operation === "subtract".
+ * Wire-up: arithmetic.astro → subtractDecimal32(a, b, mode).
  *
- * Suggested approach:
- * 1. Reuse parseDecimalInput / decode from Feature 1 (Justin) for operands.
- * 2. Handle specials first (NaN, ±Inf combinations).
- * 3. Align exponents, subtract signed coefficients, then fitToDecimal32 with `mode`
- *    (Jillianne’s roundDigitString / Justin’s fit helper).
- *
- * TODO(Jacoba): Implement subtractDecimal32 fully; return ConversionResult-shaped object
- * with a detailed `steps` array for the UI.
+ * TODO(Jacoba): Implement subtractDecimal32; return ConversionResult with steps.
  */
 
 /**

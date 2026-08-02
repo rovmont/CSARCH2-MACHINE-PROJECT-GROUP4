@@ -186,6 +186,10 @@ export function roundDigitString(digits, targetDigits, mode, sign = 0, radix = '
  */
 export function demonstrateRounding(numberInput, targetDigits, radix = 'decimal') {
   const raw = String(numberInput ?? '').trim();
+  if (!raw) {
+    throw new SyntaxError('Number input is empty.');
+  }
+
   let sign = /** @type {0|1} */ (0);
   let body = raw;
 
@@ -196,15 +200,24 @@ export function demonstrateRounding(numberInput, targetDigits, radix = 'decimal'
     body = body.slice(1);
   }
 
-  const stripPattern = radix === 'binary' ? /[^01]/g : /[^0-9]/g;
+  // Validate characters for the selected format.
+  const formatOk =
+    radix === 'binary'
+      ? /^[01]+(\.[01]+)?$/.test(body)
+      : /^\d+(\.\d+)?$/.test(body);
+  if (!formatOk) {
+    throw new SyntaxError(
+      radix === 'binary'
+        ? 'Binary input must contain only 0/1 digits with at most one optional radix point.'
+        : 'Decimal input must contain only decimal digits with at most one optional decimal point.'
+    );
+  }
 
-  //pos of decimal point in og input
   const dotIndex = body.indexOf('.');
-  const integerPartRaw = (dotIndex === -1 ? body : body.slice(0, dotIndex)).replace(stripPattern, '');
+  const integerPartRaw = dotIndex === -1 ? body : body.slice(0, dotIndex);
   const integerDigitCount = integerPartRaw.length;
 
-  body = body.replace('.', '');
-  const originalDigits = body.replace(stripPattern, '') || '0';
+  const originalDigits = body.replace('.', '') || '0';
   const originalLength = originalDigits.length;
 
   /** @type {RoundingMode[]} */

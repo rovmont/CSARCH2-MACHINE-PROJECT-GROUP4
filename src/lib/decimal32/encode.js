@@ -5,16 +5,15 @@ import { packResult, decodeDecimal32 } from './format.js';
 /**
  * OWNER: Go, Justin (Feature 1 — Convert page)
  *
- * Spec: Convert a decimal number to IEEE 754 decimal32 (DPD).
- * Output: specials + binary with spacing + hexadecimal (+ steps for teaching UI).
+ * Spec input: a decimal number only.
+ * Spec outputs: spaced binary + hexadecimal (special cases included).
  *
- * Wire-up: src/pages/convert.astro already calls convertToDecimal32(input).
+ * Wire-up: src/pages/convert.astro calls convertToDecimal32(input).
  *
  * TODO(Justin):
- * 1. parseDecimalInput — accept decimal (incl. sci notation), ±Inf, NaN, hex, 32-bit binary.
- * 2. fitToDecimal32 — normalize to 7 digits + exponent; apply rounding (import from rounding.js
- *    once Jillianne finishes; until then you may temporarily chop / use ties-to-even yourself).
- * 3. convertToDecimal32 — public API for the Convert page; return ConversionResult via packResult.
+ * 1. parseDecimalInput — decimal only (±Inf / NaN for specials).
+ * 2. fitToDecimal32 — normalize to 7 digits + exponent; prefer Jillianne’s roundDigitString.
+ * 3. convertToDecimal32 — public API; return ConversionResult via packResult.
  * 4. Cover specials: ±0, ±Inf, NaN, overflow → Inf, underflow → 0 / subnormal path.
  */
 

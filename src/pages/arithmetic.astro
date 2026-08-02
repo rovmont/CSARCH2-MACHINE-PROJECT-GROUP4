@@ -4,19 +4,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Arithmetic · decimal32">
   <h1 class="page-title">Subtraction &amp; division</h1>
   <p class="lede">
-    Operands may be decimal or IEEE hexadecimal. Choose subtraction or division and a rounding
-    mode. Results include decimal, spaced binary, hexadecimal, and a step-by-step trace.
+    Enter operands in decimal or IEEE hexadecimal format, choose subtraction or division,
+    and select a rounding method. Results include decimal, spaced binary, hexadecimal,
+    and a step-by-step trace.
   </p>
 
   <section class="panel">
     <form id="arith-form" class="form-grid">
       <label>
+        Operand A format
+        <select id="op-a-format" name="aFormat">
+          <option value="decimal">Decimal</option>
+          <option value="hex">IEEE hexadecimal</option>
+        </select>
+      </label>
+      <label>
         Operand A
-        <input id="op-a" name="a" placeholder="e.g. 10.5 or 0x22500000" required />
+        <input id="op-a" name="a" placeholder="e.g. 10.5" required />
+      </label>
+      <label>
+        Operand B format
+        <select id="op-b-format" name="bFormat">
+          <option value="decimal">Decimal</option>
+          <option value="hex">IEEE hexadecimal</option>
+        </select>
       </label>
       <label>
         Operand B
-        <input id="op-b" name="b" placeholder="e.g. 2.25 or 0x22500000" required />
+        <input id="op-b" name="b" placeholder="e.g. 2.25" required />
       </label>
       <label>
         Operation
@@ -42,17 +57,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { subtractDecimal32, divideDecimal32 } from '../lib/decimal32/index.js';
+  import {
+    subtractDecimal32,
+    divideDecimal32,
+    parseArithmeticOperand,
+  } from '../lib/decimal32/index.js';
 
   const form = document.getElementById('arith-form');
   const err = document.getElementById('arith-error');
   const out = document.getElementById('arith-results');
+  const opA = document.getElementById('op-a');
+  const opB = document.getElementById('op-b');
+  const formatA = document.getElementById('op-a-format');
+  const formatB = document.getElementById('op-b-format');
+
+  function syncPlaceholder(input, formatSelect) {
+    input.placeholder =
+      formatSelect.value === 'hex' ? 'e.g. 22500000' : 'e.g. 10.5';
+  }
+
+  formatA.addEventListener('change', () => syncPlaceholder(opA, formatA));
+  formatB.addEventListener('change', () => syncPlaceholder(opB, formatB));
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     try {
-      const a = document.getElementById('op-a').value;
-      const b = document.getElementById('op-b').value;
+      const a = parseArithmeticOperand(opA.value, formatA.value);
+      const b = parseArithmeticOperand(opB.value, formatB.value);
       const op = document.getElementById('op-type').value;
       const mode = document.getElementById('op-round').value;
       const result = op === 'divide' ? divideDecimal32(a, b, mode) : subtractDecimal32(a, b, mode);

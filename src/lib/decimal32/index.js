@@ -7,7 +7,8 @@
  * | types.js        | shared             | Constants + result shapes (keep stable) |
  * | dpd.js          | Justin             | DPD declet encode/decode                |
  * | format.js       | Justin             | Pack/unpack bits, hex, decimal string   |
- * | encode.js       | Justin             | Convert page: parse + fit to decimal32  |
+ * | encode.js       | Justin             | Convert: decimal-only parse + fit       |
+ * | operands.js     | shared (Feature 3) | Operand parse by UI format (decimal|hex) |
  * | rounding.js     | Jillianne          | Four rounding modes + demo API          |
  * | subtract.js     | Jacoba             | A − B with steps                        |
  * | divide.js       | Jat                | A ÷ B with steps                        |
@@ -23,6 +24,7 @@ export {
   packResult,
 } from './format.js';
 export { parseDecimalInput, fitToDecimal32, convertToDecimal32 } from './encode.js';
+export { parseArithmeticOperand } from './operands.js';
 export {
   roundDigitString,
   demonstrateRounding,

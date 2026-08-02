@@ -4,14 +4,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Round · decimal32">
   <h1 class="page-title">Rounding methods</h1>
   <p class="lede">
-    Round a decimal or binary digit string to a target length using all four methods:
-    chopping, round-up, round-down, and round-to-nearest ties-to-even.
+    Inputs: a number in decimal or binary format, plus the target number of digits.
+    Outputs: rounded results for chopping, round-up, round-down, and ties-to-even.
   </p>
 
   <section class="panel">
     <form id="round-form" class="form-grid">
       <label>
-        Number (decimal or binary digits)
+        Number
         <input id="round-input" name="value" placeholder="e.g. 1.23456789 or 1011011" required />
       </label>
       <label>
@@ -19,7 +19,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <input id="round-digits" name="digits" type="number" min="1" max="32" value="7" required />
       </label>
       <label>
-        Input radix
+        Input format
         <select id="round-radix" name="radix">
           <option value="decimal">Decimal</option>
           <option value="binary">Binary</option>

@@ -4,15 +4,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Convert · decimal32">
   <h1 class="page-title">Convert to decimal32</h1>
   <p class="lede">
-    Enter a decimal number (or IEEE hex / 32-bit binary). Output includes special cases,
-    DPD spaced binary, and hexadecimal.
+    Enter a decimal number. Outputs include spaced binary and hexadecimal (special cases
+    included), plus a step-by-step trace.
   </p>
 
   <section class="panel">
     <form id="convert-form" class="form-grid">
       <label>
-        Decimal / hex / binary input
-        <input id="convert-input" name="value" placeholder="e.g. -12.34, Infinity, 0x225349B0" required />
+        Decimal number
+        <input id="convert-input" name="value" placeholder="e.g. -12.34, 0.001, Infinity, NaN" required />
       </label>
       <button class="btn btn-primary" type="submit">Convert</button>
     </form>

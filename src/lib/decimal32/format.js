@@ -20,9 +20,9 @@ const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1);
  *
  * TODO(Justin):
  * 1. encodeDecimal32 — pack a Decimal32Value into a 32-bit binary string (use dpd.js).
- * 2. decodeDecimal32 — unpack bits or 0xHEX into a Decimal32Value.
+ * 2. decodeDecimal32 — unpack IEEE hex / bit string into a Decimal32Value.
  * 3. valueToDecimalString — pretty-print a Decimal32Value for the UI.
- * 4. spacedBinary / packResult can stay as thin helpers once bits exist.
+ * 4. spacedBinary / packResult helpers once bits exist.
  */
 
 /**
