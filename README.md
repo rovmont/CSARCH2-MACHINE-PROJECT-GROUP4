@@ -33,6 +33,14 @@
 - Added shared arithmetic operand parsing (`arithmetic/operands.js`).
 - Split the decimal32 library into focused folders (`format/`, `convert/`, `arithmetic/`).
 - Made step-by-step explanation of outputs more visual.
+- **Feature 3 - subtract (Jacoba)** Did full logic implementation of decimal32 subtraction, considering all likely testcases.
+
+
+
+### August 3, 2026
+
+- **Feature 3 - subtract (Jacoba)** Implemented proper visualization for subtract.
+- Took existing step visualization code from subtract and conversion and centralized it into their own files for re-usability throughout website.
 
 ---
 
@@ -46,7 +54,7 @@
 | Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README     | Done        |
 | Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex | Done        |
 | Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API        | Done        |
-| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract    | Not Started |
+| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract    | Done        |
 | Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide       | In Progress |
 
 
