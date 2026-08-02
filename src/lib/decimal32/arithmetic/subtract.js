@@ -1,5 +1,6 @@
 import { packResult } from '../format/pack.js';
 import { roundDigitString } from '../rounding.js';
+import { step } from '../format/step.js';
 import { DECIMAL32 } from '../types.js';
 
 /**
@@ -10,19 +11,7 @@ import { DECIMAL32 } from '../types.js';
  * Outputs: step-by-step + decimal / spaced binary / hex.
  *
  * Wire-up: arithmetic.astro → subtractDecimal32(a, b, mode).
- *
- * TODO(Jacoba): Implement subtractDecimal32; return ConversionResult with steps.
  */
-
-/**
- * @param {string} title
- * @param {string} text
- * @param {import('../types.js').StepVisual} [visual]
- * @returns {import('../types.js').ConversionStep}
- */
-function step(title, text, visual) {
-	return visual ? { title, text, visual } : { title, text };
-}
 
 /** Signed decimal string for a magnitude string/number, e.g. ("5", 1) -> "−5". */
 function signedStr(coefficient, sign) {

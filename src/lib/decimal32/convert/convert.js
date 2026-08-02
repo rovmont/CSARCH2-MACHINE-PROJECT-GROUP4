@@ -1,18 +1,9 @@
 import { DECIMAL32 } from '../types.js';
 import { packResult } from '../format/pack.js';
 import { explainEncodingProcess } from '../format/explain.js';
+import { step } from '../format/step.js';
 import { roundDigitString } from '../rounding.js';
 import { parseDecimalInput } from './parse.js';
-
-/**
- * @param {string} title
- * @param {string} text
- * @param {import('../types.js').StepVisual} [visual]
- * @returns {import('../types.js').ConversionStep}
- */
-function step(title, text, visual) {
-  return visual ? { title, text, visual } : { title, text };
-}
 
 /**
  * Fit an arbitrary-precision finite value into decimal32 (7 digits).
