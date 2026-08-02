@@ -14,15 +14,24 @@
 - Confirmed tech stack: Astro + Node + CSS + JavaScript.
 - Chose **DPD (Densely Packed Decimal)** as the decimal32 significand encoding.
 - Assigned task ownership across all five members (see Task Board below).
-- Set-up Astro app foundation, shared CSS/layout, and feature pages.
-- Left Feature 1–3 **logic stubs** (`src/lib/decimal32/`) with owner TODOs for members to implement.
+- Set-up Astro app foundation, shared CSS/layout, and feature pages with Feature 1–3 logic stubs.
+- **Feature 1 (Justin):** Implemented decimal32 DPD encode/decode (`dpd.js`, `format`/`encode` pipeline), specials (±0, ±Inf, NaN), and convert outputs (spaced binary + hex).
+
+
+
+### August 1, 2026
+
+- **Feature 2 (Jillianne):** Implemented the four rounding methods in `rounding.js` (chopping, round-up, round-down, ties-to-even) plus shared `roundDigitString` for other features to reuse.
+- Polished Round-page display so results show the formatted rounded value.
 
 
 
 ### August 2, 2026
 
-- Aligned feature inputs with the Machine 4 specification (decimal-only convert; decimal/binary rounding; decimal or IEEE hex arithmetic via UI format selectors).
+- Rewrote the incremental README and aligned feature inputs with the Machine 4 specification (decimal-only convert; decimal/binary rounding; decimal or IEEE hex arithmetic via UI format selectors).
 - Added shared arithmetic operand parsing (`arithmetic/operands.js`).
+- Split the decimal32 library into focused folders (`format/`, `convert/`, `arithmetic/`).
+- Made step-by-step explanation of outputs more visual.
 
 ---
 
@@ -31,13 +40,13 @@
 ## Task Board
 
 
-| Member           | Ownership            | Tasks                                                                  | Status      |
-| ---------------- | -------------------- | ---------------------------------------------------------------------- | ----------- |
-| Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README        | Done        |
-| Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex     | In Progress |
-| Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API           | Done        |
-| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract       | Not Started |
-| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide          | Not Started |
+| Member           | Ownership            | Tasks                                                               | Status      |
+| ---------------- | -------------------- | ------------------------------------------------------------------- | ----------- |
+| Montaño, Rovin   | Foundation & design  | Set-up Astro/Node; CSS/layout; shared UI; deploy config; README     | Done        |
+| Go, Justin       | Feature 1            | `format/`, `convert/`, `dpd.js` — DPD convert; specials; binary/hex | Done        |
+| Leung, Jillianne | Feature 2            | `rounding.js` — four methods + shared `roundDigitString` API        | Done        |
+| Luna, Jacoba     | Feature 3 — subtract | `arithmetic/subtract.js` — hex/decimal ops; steps; wire subtract    | Not Started |
+| Teoxon, Jat      | Feature 3 — divide   | `arithmetic/divide.js` — division specials/steps; wire divide       | Not Started |
 
 
 Status values: `Not Started` · `In Progress` · `Done`

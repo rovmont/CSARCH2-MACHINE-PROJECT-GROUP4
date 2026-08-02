@@ -36,7 +36,7 @@ export const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1); // 90
  * @property {string} [coeffCont]
  * @property {string} [declet0]
  * @property {string} [declet1]
- * @property {'sign'|'combination'|'expCont'|'coeffCont'|null} [highlight]
+ * @property {'sign'|'combination'|'expCont'|'coeffCont'|Array<'sign'|'combination'|'expCont'|'coeffCont'>|null} [highlight]
  *
  * @typedef {Object} DigitsVisual
  * @property {'digits'} type
@@ -63,7 +63,14 @@ export const Q_MAX = DECIMAL32.EMAX - (DECIMAL32.PRECISION - 1); // 90
  * @property {string} declet0
  * @property {string} declet1
  *
- * @typedef {BitFieldVisual|DigitsVisual|EquationVisual|PartsVisual|DpdVisual} StepVisual
+ * @typedef {Object} HexVisual
+ * @property {'hex'} type
+ * @property {string} bits - 32-char binary string
+ * @property {string} hex - e.g. 0xA6E4D2E7
+ * @property {string[]} [nibbles] - eight 4-bit groups
+ * @property {string} [hexDigits] - eight hex characters without 0x
+ *
+ * @typedef {BitFieldVisual|DigitsVisual|EquationVisual|PartsVisual|DpdVisual|HexVisual} StepVisual
  *
  * @typedef {Object} ConversionStep
  * @property {string} title - short heading for the step card

@@ -338,17 +338,21 @@ textarea:focus {
   gap: 0.35rem;
   width: 100%;
   overflow-x: auto;
-  padding-bottom: 0.15rem;
+  overflow-y: visible;
+  padding: 0.2rem 0.1rem 0.45rem;
 }
 
 .bf-field {
   min-width: 0;
   display: grid;
-  gap: 0.3rem;
-  padding: 0.45rem 0.4rem;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 0.55rem 0.45rem 0.6rem;
   border-radius: 8px;
   border: 1px solid transparent;
   text-align: center;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
 .bf-sign {
@@ -371,16 +375,32 @@ textarea:focus {
   border-color: rgba(255, 180, 84, 0.28);
 }
 
-.bf-field.is-hot {
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: translateY(-1px);
+.bf-sign.is-hot {
+  border-color: rgba(200, 245, 66, 0.85);
+  background: rgba(200, 245, 66, 0.28);
+}
+
+.bf-combination.is-hot {
+  border-color: rgba(61, 255, 168, 0.85);
+  background: rgba(61, 255, 168, 0.28);
+}
+
+.bf-expCont.is-hot {
+  border-color: rgba(120, 190, 255, 0.85);
+  background: rgba(120, 190, 255, 0.28);
+}
+
+.bf-coeffCont.is-hot {
+  border-color: rgba(255, 180, 84, 0.85);
+  background: rgba(255, 180, 84, 0.26);
 }
 
 .bf-bits {
   font-size: clamp(0.62rem, 1.7vw, 0.78rem);
   color: var(--ink);
   word-break: break-all;
-  line-height: 1.25;
+  line-height: 1.35;
+  padding: 0.1rem 0;
 }
 
 .bf-split {
@@ -397,10 +417,15 @@ textarea:focus {
 }
 
 .bf-label {
+  display: block;
   font-size: 0.62rem;
+  line-height: 1.35;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--muted);
+  padding-bottom: 0.1rem;
+  overflow: visible;
+  white-space: normal;
 }
 
 .digit-viz {
@@ -608,6 +633,55 @@ textarea:focus {
   border-color: rgba(120, 190, 255, 0.4);
 }
 
+.hex-viz {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.hex-row {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.hex-cell {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  padding: 0.35rem 0.2rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.hex-nibble {
+  font-size: clamp(0.55rem, 1.5vw, 0.72rem);
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.hex-arrow {
+  color: var(--accent);
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.hex-digit {
+  font-size: 0.95rem;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.hex-result {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.hex-result code {
+  color: var(--ink);
+}
+
 .result-overview .bit-strip {
   margin-top: 0.35rem;
 }
@@ -704,5 +778,9 @@ textarea:focus {
     grid-template-columns: 1fr 1fr;
     padding-top: 0;
     justify-items: center;
+  }
+
+  .hex-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

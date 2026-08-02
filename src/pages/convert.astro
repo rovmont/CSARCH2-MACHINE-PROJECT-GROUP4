@@ -62,7 +62,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     const cells = fields
       .map((f) => {
-        const hi = v.highlight === f.key ? ' is-hot' : '';
+        const hot = Array.isArray(v.highlight)
+          ? v.highlight.includes(f.key)
+          : v.highlight === f.key;
+        const hi = hot ? ' is-hot' : '';
         const body = f.split
           ? `<span class="bf-bits bf-split"><span>${esc(f.split[0])}</span><span>${esc(f.split[1])}</span></span>`
           : `<span class="bf-bits">${esc(f.bits)}</span>`;
@@ -163,6 +166,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>`;
   }
 
+  function renderHex(v) {
+    const bits = String(v.bits || '').replace(/\s/g, '').padStart(32, '0').slice(-32);
+    const nibbles = v.nibbles || [];
+    const hexDigits = String(v.hexDigits || v.hex || '').replace(/^0x/i, '');
+    const cells = nibbles
+      .map((nibble, i) => {
+        const digit = hexDigits[i] ?? '';
+        return `
+          <div class="hex-cell">
+            <code class="hex-nibble">${esc(nibble)}</code>
+            <span class="hex-arrow" aria-hidden="true">↓</span>
+            <code class="hex-digit">${esc(digit)}</code>
+          </div>`;
+      })
+      .join('');
+    return `
+      <div class="hex-viz">
+        <div class="hex-row">${cells}</div>
+        <p class="hex-result">Hexadecimal result: <code>${esc(v.hex || '0x' + hexDigits)}</code></p>
+      </div>`;
+  }
+
   function renderVisual(visual) {
     if (!visual) return '';
     switch (visual.type) {
@@ -176,6 +201,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return renderParts(visual);
       case 'dpd':
         return renderDpd(visual);
+      case 'hex':
+        return renderHex(visual);
       default:
         return '';
     }
