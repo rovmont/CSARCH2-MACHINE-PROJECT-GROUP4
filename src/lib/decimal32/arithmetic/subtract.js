@@ -89,13 +89,23 @@ export function subtractDecimal32(aInput, bInput, mode = 'ties-to-even') {
 	const rawSum = signedA + signedB;
 	steps.push(`Get the sum of both coefficients: ${signedA} + (${signedB}) = ${rawSum} (× 10^${commonExp}).`);
 
-
-	// TODO: check if zero result
-
-
 	// seperating to sign and coeff
 	const resultSign = rawSum < 0n ? 1 : 0;
 	const resultCoeff = rawSum < 0n ? -rawSum : rawSum
+
+	// checking if result is equal to zero
+	if (rawSum === 0n) {
+		// IEEE 754: exact-zero is +0, unless round-down, where its 0
+		resultCoeff = 0n;
+		if (mode === 'round-down'){
+			resultSign = 1;
+			steps.push(`Result is exactly zero. As rounding is set to round-down, the result is -0 in accordance to IEEE 754.`);
+		}
+		else {
+			resultSign = 0;
+			steps.push(`Result is exactly zero. Sign is set to +0`);
+		}
+	}
 
 	
 	// TODO: normalize

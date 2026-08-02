@@ -1,6 +1,6 @@
-import { packResult } from './format.js';
-import { roundDigitString } from './rounding.js';
-import { DECIMAL32, Q_MIN, Q_MAX } from './types.js';
+import { packResult } from '../format/pack.js';
+import { roundDigitString } from '../rounding.js';
+import { DECIMAL32 } from '../types.js';
 
 /**
  * OWNER: Teoxon, Jat (Feature 3b — Division)
