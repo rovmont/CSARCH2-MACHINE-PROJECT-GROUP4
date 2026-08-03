@@ -29,8 +29,8 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   const steps = [];
   const flags = [];
 
-  const a = normalizeOperandOutput(aInput);
-  const b = normalizeOperandOutput(bInput);
+  const a = normalizeOperand(aInput);
+  const b = normalizeOperand(bInput);
 
   steps.push(describe('A', a));
   steps.push(describe('B', b));
