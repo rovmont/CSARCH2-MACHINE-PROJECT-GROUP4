@@ -41,6 +41,7 @@
 
 - **Feature 3 - subtract (Jacoba)** Implemented proper visualization for subtract.
 - Took existing step visualization code from subtract and conversion and centralized it into their own files for re-usability throughout website.
+- **Feature 2 (Jillianne):** Implemented visualizations for rounding.
 
 ---
 
