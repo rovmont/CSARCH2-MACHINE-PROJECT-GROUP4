@@ -85,7 +85,7 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   }
   if(aInf){
     steps.push(step('∞ ÷ finite', 'Infinity divided by any finite number is infinity'));
-    return packResult({ kind: 'infinity', sign: 0 }, steps, flags);
+    return packResult({ kind: 'infinity', sign }, steps, flags);
   }
   if(bInf){
     const q = clampExp(a.exp - b.exp);
@@ -159,9 +159,8 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   const feed = sticky ? qStr + '1' : qStr;
   const rounding = roundDigitString(feed, PRECISION, mode, sign, 'decimal');
 
-  for(const st of rounding.steps){
-    steps.push(st);
-  }
+  //Got rid of the for(steps) loop cause it was messing up the step display
+  steps.push(step(`Round to ${PRECISION} digits (${mode})`, rounding.steps.join(' ')));
 
   let coeffStr = rounding.digits;
   let exp = guardExp + 1;  //Guard digit is dropped so up by one
