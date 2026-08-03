@@ -91,7 +91,7 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   }
   if(bZero){
     flags.push('divide-by-zero');
-    steps.push(step('finite ÷ 0', 'A nonzero finite number divided by zero is infinity (divide-by-zero).));
+    steps.push(step('finite ÷ 0', 'A nonzero finite number divided by zero is infinity (divide-by-zero).'));
     return packResult({ kind: 'infinity', sign }, steps, flags);
   }
   if(aZero){
