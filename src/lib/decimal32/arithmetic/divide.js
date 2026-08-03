@@ -159,8 +159,12 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   const feed = sticky ? qStr + '1' : qStr;
   const rounding = roundDigitString(feed, PRECISION, mode, sign, 'decimal');
 
-  //Got rid of the for(steps) loop cause it was messing up the step display
-  steps.push(step(`Round to ${PRECISION} digits (${mode})`, rounding.steps.join(' ')));
+  //Had to redo this since there was a bug where a card could have [object][object][object]
+  const roundDetail = (rounding.steps ?? [])
+  .map((s) => (typeof s === 'string' ? s : s?.text ?? ''))
+  .filter(Boolean)
+  .join(' ');
+  steps.push(step(`Round to ${PRECISION} digits (${mode})`, roundDetail));
 
   let coeffStr = rounding.digits;
   let exp = guardExp + 1;  //Guard digit is dropped so up by one
