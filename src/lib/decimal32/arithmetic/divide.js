@@ -49,7 +49,11 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
 
   const sign = (a.sign ^ b.sign);
   
-  steps.push('Determine sign', `sign(A) XOR sign(B) = ${a.sign} XOR ${b.sign} = ${sign ? '-' : '+'}`);
+  steps.push(
+    step(
+      'Determine sign', `sign(A) XOR sign(B) = ${a.sign} XOR ${b.sign} = ${sign ? '-' : '+'}`
+    )
+  );
 
   //Special Cases
   if (a.kind === 'nan' || b.kind === 'nan'){
