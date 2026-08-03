@@ -225,6 +225,7 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
       coeff: v.coefficient ?? '0',
     };
   }
+}
 
   function isZero(o){
     return o.kind === 'zero' || (o.kind === 'finite' && /^0*$/.test(o.coeff));
@@ -245,4 +246,3 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
     
     return `Input ${name}: sign ${o.sign ? '−' : '+'}, coefficient ${o.coeff}, exponent ${o.exp}.`;
   }
-}
