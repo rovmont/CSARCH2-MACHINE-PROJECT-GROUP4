@@ -111,9 +111,9 @@ App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`
 
 ### Justin
 
-- **Aha moments / things learned:**
-- **Challenges faced:**
-- **Creative contributions:**
+- **Aha moments / things learned:** My task was making the conversion from decimal to its equivalent IEEE decimal 32, after learning how to convert it manually I had to figure out how to do it via code, and realized it was quite lengthy, but after putting it all to place it worked well and fell nice to see what I learned how to do manually is now done automatically.
+- **Challenges faced:** One challenge was thinking how to implement the conversion. As we learned how to do this in class manually, my task was to now translate the knowledge I learn into code that can do it automatically. One lengthy process was doing the DPD, as it has different rules base on what number is used. Though it was difficult initially, my knowledge on the topic was a good foundation in completing this task, the only one left that was needed was to convert it into code.
+- **Creative contributions:** I implemented the logic for feature 1, which is the decimal to IEEE decimal 32 converter. 
 
 
 
