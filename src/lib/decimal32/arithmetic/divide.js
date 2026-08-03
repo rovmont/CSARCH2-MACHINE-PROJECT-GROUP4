@@ -209,7 +209,7 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
   steps.push(`Final result: ${sign ? '−' : ''}${coeffStr} × 10^${exp}.`);
 
   return packResult(finalResult, steps, flags);
-  
+}
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -225,7 +225,7 @@ export function divideDecimal32(aInput, bInput, mode = 'ties-to-even') {
       coeff: v.coefficient ?? '0',
     };
   }
-}
+
 
   function isZero(o){
     return o.kind === 'zero' || (o.kind === 'finite' && /^0*$/.test(o.coeff));
