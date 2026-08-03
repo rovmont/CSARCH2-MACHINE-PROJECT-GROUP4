@@ -127,9 +127,9 @@ App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`
 
 ### Jacoba
 
-- **Aha moments / things learned:**
-- **Challenges faced:**
-- **Creative contributions:**
+- **Aha moments / things learned:** I was assigned to making subtraction, I originally thought that this would be pretty simple, and to some degree it is. The actual process of subtraction in decimal32 is relatively straightforward, and so was implementing it. The part of the implementation that took me the most time was considering the different test cases (having a result of greater than 8 digits, having infinity and NaN inputs) and the different flags (inexact, overflow, underflow). I will say however, that while this part of the implementation took me the most time and work, it was also the most insightful part. It's easy to oversimplify the process of something like floating-point decimal subtraction, because, well, it really is *just* subtraction. But having to actually implement and consider all these different factors made me grow a better appreciation and understanding of decimal32.
+- **Challenges faced:** Like mentioned, the most difficult part of this project for me personally was considering all the different test cases. I think the most, not necessarily annoying, but the one that stumped me the most is when an 8 digit result is produced, rounded down to 7, but after rounding the carry causes another digit, making the result go back to 8 digits... In the end, another check for whether the result was within 7 digits was necessary. That being said though, the process of making this project went pretty smoothly.
+- **Creative contributions:** I implemented the logic for subtraction, as well as the step visualization for it. Step visualization code prior was also all put in the respective .astro and .js files of some functions, and I edited it so that these functions are centralized throughout the code and usable by all functions that may need it.
 
 
 
