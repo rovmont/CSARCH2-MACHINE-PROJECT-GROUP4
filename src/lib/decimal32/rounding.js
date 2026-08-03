@@ -10,9 +10,6 @@
  *
  * Wire-up: src/pages/round.astro calls demonstrateRounding(...).
  * Also export roundDigitString for Jacoba/Jat to use in subtract/divide.
- *
- * Steps are built with the shared step() helper (format/step.js) so the walkthrough
- * on the Round page gets the same step-card + visual treatment as Convert.
  */
 
 import { step } from './format/step.js';
