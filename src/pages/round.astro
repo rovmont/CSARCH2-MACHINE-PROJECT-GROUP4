@@ -35,6 +35,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { demonstrateRounding } from '../lib/decimal32/index.js';
+  import { esc, renderParts, renderStepList } from '../lib/render/stepViz.js';
 
   const form = document.getElementById('round-form');
   const err = document.getElementById('round-error');
@@ -47,25 +48,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     'ties-to-even': 'Round-to-nearest ties-to-even',
   };
 
+  function render(demo) {
+    err.hidden = true;
+    out.hidden = false;
+
+    const overview = renderParts({
+      type: 'parts',
+      parts: [
+        { label: 'Sign', value: demo.sign === 1 ? 'Negative (−)' : 'Positive (+)', tone: 'neutral' },
+        { label: 'Original digits', value: demo.originalDigits, tone: 'msd' },
+        { label: 'Target digits', value: String(demo.targetDigits), tone: 'exp' },
+        { label: 'Radix', value: demo.radix, tone: 'neutral' },
+      ],
+    });
+
+    const modeSections = Object.entries(demo.results)
+      .map(
+        ([mode, r]) => `
+        <div class="result-row">
+          <strong>${esc(labels[mode])}</strong>
+          <code>${esc(r.formatted)}</code>
+          ${renderStepList(r.steps)}
+        </div>`
+      )
+      .join('');
+
+    out.innerHTML = `
+      <div class="result-row result-overview">
+        <strong>Rounding input</strong>
+        ${overview}
+      </div>
+      ${modeSections}
+    `;
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     try {
       const value = document.getElementById('round-input').value;
       const digits = Number(document.getElementById('round-digits').value);
       const radix = document.getElementById('round-radix').value;
-      const demo = demonstrateRounding(value, digits, radix);
-      err.hidden = true;
-      out.hidden = false;
-      out.innerHTML = Object.entries(demo.results)
-        .map(
-          ([mode, r]) => `
-          <div class="result-row">
-            <strong>${labels[mode]}</strong>
-            <code>${r.formatted}</code>
-            <ol class="steps">${r.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
-          </div>`
-        )
-        .join('');
+      render(demonstrateRounding(value, digits, radix));
     } catch (ex) {
       out.hidden = true;
       err.hidden = false;
