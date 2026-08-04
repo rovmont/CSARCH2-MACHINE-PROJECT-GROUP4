@@ -139,6 +139,8 @@ Zooming in may prove necessary. The full screenshots are available in the screen
 
 ### Subtraction
 ![Conversion Screenshots](screenshots/subtract1.png)
+![Conversion Screenshots](screenshots/subtract2.png)
+![Conversion Screenshots](screenshots/subtract3.png)
 
 ### Rounding
 ![Conversion Screenshots](screenshots/rounding.png)
