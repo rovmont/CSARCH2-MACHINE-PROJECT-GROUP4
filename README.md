@@ -137,18 +137,13 @@ Zooming in may prove necessary. The full screenshots are available in the screen
 ### Conversion
 ![Conversion Screenshots](screenshots/convert.png)
 
+### Rounding
+![Conversion Screenshots](screenshots/rounding.png)
+
 ### Subtraction
 ![Conversion Screenshots](screenshots/subtract1.png)
 ![Conversion Screenshots](screenshots/subtract2.png)
 ![Conversion Screenshots](screenshots/subtract3.png)
 
-### Rounding
-![Conversion Screenshots](screenshots/rounding.png)
-
 ### Division
-![Conversion Screenshots](screenshots/Division1.png)
-![Conversion Screenshots](screenshots/Division2.png)
-![Conversion Screenshots](screenshots/Division3.png)
-![Conversion Screenshots](screenshots/Division4.png)
-![Conversion Screenshots](screenshots/Division5.png)
-![Conversion Screenshots](screenshots/Division6.png)
+![Conversion Screenshots](screenshots/division.png)
