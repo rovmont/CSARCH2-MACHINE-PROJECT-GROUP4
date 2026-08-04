@@ -132,6 +132,10 @@ In the development of this output, Claude was used for documentation and guides 
 ---
 
 ## Screenshots
+Zooming in may prove necessary. The full screenshots are available in the screenshots folder. Additionally, these screenshots only show the final output, the detailed step-by-step process are available in the website.
 
 ### Conversion
 ![Conversion Screenshots](screenshots/convert.png)
+
+### Subtraction
+![Conversion Screenshots](screenshots/subtract1.png)
