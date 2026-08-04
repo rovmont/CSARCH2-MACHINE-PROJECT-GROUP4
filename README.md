@@ -29,12 +29,14 @@
 - Split the decimal32 library into focused folders (`format/`, `convert/`, `arithmetic/`).
 - Made step-by-step explanation of outputs more visual.
 - **Feature 3 - subtract (Jacoba)** Did full logic implementation of decimal32 subtraction, considering all likely testcases.
+- **Feature 3 - divide (Jat)** Implemented the logic for decimal32 division
 
 ### August 3, 2026
 
 - **Feature 3 - subtract (Jacoba)** Implemented proper visualization for subtract.
 - Took existing step visualization code from subtract and conversion and centralized it into their own files for re-usability throughout website.
 - **Feature 2 (Jillianne):** Implemented visualizations for rounding.
+- **Feature 3 - divide (Jat)** redesigned to accommodate proper visualization for the step-by-step procedures
 
 ---
 
@@ -110,9 +112,9 @@ App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`
 
 ### Jat
 
-- **Aha moments / things learned:**
-- **Challenges faced:**
-- **Creative contributions:**
+- **Aha moments / things learned:** I was assigned to implement division, and I already knew it was gonna be hard because I personally struggled learning it in class. Having to translate the same process but in a way that can be presented with code was another beast. Like the other members, I had to deal with the myriad of edge cases that my code had to account for. It took a while to even come up with an outline of how the code should work, and even more time to figure out what I needed to edit or work around.
+- **Challenges faced:** The biggest challenge, somehow, was actually dealing with the step-by-step visualizations. I struggled for a long time in that aspect because cards are automatically numbered by their appearance; however, I had cards that did not even have their own numbers but still counted as separate cards, disturbing the flow from steps 1 - 4 until suddenly jumping to step 8.
+- **Creative contributions:** I implemented the logic for division along with the code to help visualize the step-by-step process.
 
 ---
 
