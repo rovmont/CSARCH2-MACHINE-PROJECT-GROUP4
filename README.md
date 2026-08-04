@@ -128,3 +128,10 @@ App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`
 ### AI Usage Disclosure
 
 In the development of this output, Claude was used for documentation and guides for feature stubbing/to-dos. All technical claims and code for IEEE 754 decimal32 behavior are reviewed by the group against the course specification and standard references.
+
+---
+
+## Screenshots
+
+### Conversion
+![Conversion Screenshots](screenshots/convert.png)
