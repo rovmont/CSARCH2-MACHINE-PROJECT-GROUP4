@@ -139,3 +139,7 @@ Zooming in may prove necessary. The full screenshots are available in the screen
 
 ### Subtraction
 ![Conversion Screenshots](screenshots/subtract1.png)
+
+### Rounding
+![Conversion Screenshots](screenshots/rounding.png)
+
