@@ -2,7 +2,7 @@
 
 **Group 4:** Go, Justin · Leung, Jillianne · Luna, Jacoba · Montaño, Rovin · Teoxon, Jat  
 **Machine:** Machine 4 — Decimal 32-bit Floating-Point Machine (IEEE 754 decimal32, DPD encoding)  
-**Deployment Link:** [https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/](https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/)
+**Deployment Link:** [https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/](https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/)  
 **Demo Video:** [https://youtu.be/HF_ltxEoCY8](https://youtu.be/HF_ltxEoCY8) 
 
 ---
