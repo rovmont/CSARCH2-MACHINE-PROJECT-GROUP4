@@ -145,3 +145,10 @@ Zooming in may prove necessary. The full screenshots are available in the screen
 ### Rounding
 ![Conversion Screenshots](screenshots/rounding.png)
 
+### Division
+![Conversion Screenshots](screenshots/Division1.png)
+![Conversion Screenshots](screenshots/Division2.png)
+![Conversion Screenshots](screenshots/Division3.png)
+![Conversion Screenshots](screenshots/Division4.png)
+![Conversion Screenshots](screenshots/Division5.png)
+![Conversion Screenshots](screenshots/Division6.png)
