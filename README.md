@@ -3,6 +3,7 @@
 **Group 4:** Go, Justin · Leung, Jillianne · Luna, Jacoba · Montaño, Rovin · Teoxon, Jat  
 **Machine:** Machine 4 — Decimal 32-bit Floating-Point Machine (IEEE 754 decimal32, DPD encoding)  
 **Deployment Link:** [https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/](https://rovmont.github.io/CSARCH2-MACHINE-PROJECT-GROUP4/)
+**Demo Video:** 
 
 ---
 
@@ -37,6 +38,12 @@
 - Took existing step visualization code from subtract and conversion and centralized it into their own files for re-usability throughout website.
 - **Feature 2 (Jillianne):** Implemented visualizations for rounding.
 - **Feature 3 - divide (Jat)** redesigned to accommodate proper visualization for the step-by-step procedures
+- Completed reflection for members Jacoba and Justin
+
+### August 4, 2026
+
+- Completed reflection for members Rovin, Jillianne, Jat.
+- Completed demo video.
 
 ---
 
