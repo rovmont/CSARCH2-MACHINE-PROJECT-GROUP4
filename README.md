@@ -98,9 +98,9 @@ App routes: `/` · `/convert/` · `/round/` · `/arithmetic/`
 
 ### Jillianne
 
-- **Aha moments / things learned:**
-- **Challenges faced:**
-- **Creative contributions:**
+- **Aha moments / things learned:** I was assigned to implement the rounding feature, which initially seemed relatively simple since the four rounding methods follow straightforward rules. However, I realized that translating these rules into code required careful consideration of different cases, especially when determining which digits should be retained or discarded. I also learned how important it is to make a function reusable, as creating a shared function allowed other features to use the same rounding logic instead of having to implement it separately.
+- **Challenges faced:** One of the main challenges was ensuring that each rounding method behaved correctly for different values and edge cases. It was especially important to distinguish between chopping, round-up, round-down, and ties-to-even, since small differences in how the discarded digits are handled can produce different results. Another challenge was making the rounding process easy to understand visually, which required breaking down the process into clear steps.
+- **Creative contributions:** I implemented the logic for Feature 2, which includes the four rounding methods, chopping, round-up, round-down, and ties-to-even. I also worked on the visual step-by-step explanation for rounding so that users can see how the input is processed and how the final result is obtained.
 
 ### Jacoba
 
